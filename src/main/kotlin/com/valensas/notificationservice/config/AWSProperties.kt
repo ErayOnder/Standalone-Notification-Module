@@ -1,6 +1,7 @@
 package com.valensas.notificationservice.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
+import software.amazon.awssdk.regions.Region
 
 @ConfigurationProperties(prefix = "cloud.aws")
 data class AWSProperties (
@@ -14,6 +15,6 @@ data class AWSCredentials (
 )
 
 data class AWSRegion (
-    val static: String,
+    val static: Region,
     val auto: Boolean
 )
