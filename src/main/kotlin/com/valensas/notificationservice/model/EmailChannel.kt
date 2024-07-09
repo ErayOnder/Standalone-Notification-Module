@@ -1,5 +1,5 @@
 package com.valensas.notificationservice.model
 
-enum class EmailChannels {
+enum class EmailChannel {
     SMTP, AWS
 }
