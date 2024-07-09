@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@ConditionalOnProperty(name = ["notification-service.email.enabled"], havingValue = "true")
+@ConditionalOnProperty("notification-service.email.enabled", havingValue = "true")
 @EnableConfigurationProperties(AWSProperties::class)
 class EmailController(
     private val emailService: EmailService
