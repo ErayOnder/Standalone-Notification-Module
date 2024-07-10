@@ -21,43 +21,32 @@ class EmailService(
     @Value("\${spring.mail.username}")
     private val smtpSender: String
 ) {
-    fun send(emailModel: EmailModel): ResponseEntity<String> =
+    fun send(emailModel: EmailModel): ResponseEntity<String> {
+        val mailSender: JavaMailSender
+        val senderAddress: String
         when (emailModel.channel) {
-            EmailChannel.AWS -> doSendWithAWS(emailModel)
-            EmailChannel.SMTP -> doSendWithSMTP(emailModel)
+            EmailChannel.AWS -> {
+                mailSender = sesJavaMailSender
+                senderAddress = awsSender
+            }
+            EmailChannel.SMTP -> {
+                mailSender = smtpJavaMailSender
+                senderAddress = smtpSender
+            }
         }
 
-    fun doSendWithAWS(emailModel: EmailModel): ResponseEntity<String> {
-        val mimeMessage = sesJavaMailSender.createMimeMessage()
-        val helper = MimeMessageHelper(mimeMessage, true)
+        val mimeMessage = mailSender.createMimeMessage()
+        val mimeHelper = MimeMessageHelper(mimeMessage, true)
 
-        helper.setFrom(smtpSender)
-        helper.setTo(emailModel.receiver)
-        helper.setSubject(emailModel.subject)
-
-        emailModel.body.htmlMessage?.let {
-            helper.setText(emailModel.body.plainMessage, emailModel.body.htmlMessage)
-        } ?: helper.setText(emailModel.body.plainMessage, false)
-
-        sesJavaMailSender.send(mimeMessage)
-
-        return ResponseEntity.ok().body("Mail sent Successfully to " + emailModel.receiver + " with subject " + emailModel.subject)
-    }
-
-    fun doSendWithSMTP(emailModel: EmailModel): ResponseEntity<String> {
-        val mimeMessage = smtpJavaMailSender.createMimeMessage()
-        val helper = MimeMessageHelper(mimeMessage, true)
-
-        helper.setFrom(smtpSender)
-        helper.setTo(emailModel.receiver)
-        helper.setSubject(emailModel.subject)
+        mimeHelper.setFrom(senderAddress)
+        mimeHelper.setTo(emailModel.receiver)
+        mimeHelper.setSubject(emailModel.subject)
 
         emailModel.body.htmlMessage?.let {
-            helper.setText(emailModel.body.plainMessage, emailModel.body.htmlMessage)
-        } ?: helper.setText(emailModel.body.plainMessage, false)
+            mimeHelper.setText(emailModel.body.plainMessage, emailModel.body.htmlMessage)
+        } ?: mimeHelper.setText(emailModel.body.plainMessage, false)
 
-        smtpJavaMailSender.send(mimeMessage)
-
+        mailSender.send(mimeMessage)
         return ResponseEntity.ok().body("Mail sent Successfully to " + emailModel.receiver + " with subject " + emailModel.subject)
     }
 }
