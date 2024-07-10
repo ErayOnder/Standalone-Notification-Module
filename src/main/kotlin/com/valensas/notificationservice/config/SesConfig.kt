@@ -1,10 +1,10 @@
 package com.valensas.notificationservice.config
 
-import io.awspring.cloud.ses.SimpleEmailServiceMailSender
+import io.awspring.cloud.ses.SimpleEmailServiceJavaMailSender
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.mail.MailSender
+import org.springframework.mail.javamail.JavaMailSender
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.services.ses.SesClient
@@ -26,6 +26,6 @@ class SesConfig(
             .build()
     }
 
-    @Bean
-    fun mailSender(sesClient: SesClient): MailSender = SimpleEmailServiceMailSender(sesClient)
+    @Bean("sesJavaMailSender")
+    fun javaMailSender(sesClient: SesClient): JavaMailSender = SimpleEmailServiceJavaMailSender(sesClient)
 }
