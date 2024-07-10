@@ -17,8 +17,6 @@ class EmailController(
     private val emailService: EmailService
 ) {
     @PostMapping("/v1/email")
-    fun sendMail(@RequestBody emailModel: EmailModel): ResponseEntity<String> {
+    fun sendMail(@RequestBody emailModel: EmailModel): ResponseEntity<String> =
         emailService.send(emailModel)
-        return ResponseEntity.ok("Email sent!")
-    }
 }
