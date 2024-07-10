@@ -6,15 +6,19 @@ import org.springframework.http.ResponseEntity
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Service
 import com.valensas.notificationservice.model.EmailChannel
+import org.springframework.mail.javamail.MimeMessageHelper
 import software.amazon.awssdk.services.ses.SesClient
 import software.amazon.awssdk.services.ses.model.*
 
 @Service
 class EmailService(
-    private val javaMailSender: JavaMailSender,
     private val sesClient: SesClient,
     @Value("\${cloud.aws.sender}")
-    private val sender: String
+    private val awsSender: String,
+
+    private val javaMailSender: JavaMailSender,
+    @Value("\${spring.mail.username}")
+    private val smtpSender: String
 ) {
     fun send(emailModel: EmailModel): ResponseEntity<String> =
         when (emailModel.channel) {
@@ -35,7 +39,7 @@ class EmailService(
 
         val request = SendEmailRequest.builder()
             .destination(destination)
-            .source(sender)
+            .source(awsSender)
             .message(mailMessage)
             .build()
 
@@ -44,6 +48,19 @@ class EmailService(
     }
 
     fun doSendWithSMTP(emailModel: EmailModel): ResponseEntity<String> {
-        return ResponseEntity.ok("ok")
+        val mimeMessage = javaMailSender.createMimeMessage()
+        val helper = MimeMessageHelper(mimeMessage, true)
+
+        helper.setFrom(smtpSender)
+        helper.setTo(emailModel.receiver)
+        helper.setSubject(emailModel.subject)
+
+        emailModel.body.htmlMessage?.let {
+            helper.setText(emailModel.body.plainMessage, emailModel.body.htmlMessage)
+        } ?: helper.setText(emailModel.body.plainMessage, false)
+
+        javaMailSender.send(mimeMessage)
+
+        return ResponseEntity.ok().body("Mail sent Successfully to " + emailModel.receiver + " with subject " + emailModel.subject)
     }
 }
