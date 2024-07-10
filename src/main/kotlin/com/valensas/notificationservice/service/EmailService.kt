@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Service
 import com.valensas.notificationservice.model.EmailChannel
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.mail.javamail.MimeMessageHelper
 import software.amazon.awssdk.services.ses.SesClient
 import software.amazon.awssdk.services.ses.model.*
@@ -16,6 +17,7 @@ class EmailService(
     @Value("\${cloud.aws.sender}")
     private val awsSender: String,
 
+    @Qualifier("smtpJavaMailSender")
     private val javaMailSender: JavaMailSender,
     @Value("\${spring.mail.username}")
     private val smtpSender: String
