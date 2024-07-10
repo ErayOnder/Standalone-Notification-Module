@@ -7,6 +7,8 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Service
 import com.valensas.notificationservice.model.EmailChannel
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.http.HttpStatus
+import org.springframework.mail.*
 import org.springframework.mail.javamail.MimeMessageHelper
 
 @Service
@@ -46,7 +48,15 @@ class EmailService(
             mimeHelper.setText(emailModel.body.plainMessage, emailModel.body.htmlMessage)
         } ?: mimeHelper.setText(emailModel.body.plainMessage, false)
 
-        mailSender.send(mimeMessage)
-        return ResponseEntity.ok().body("Mail sent Successfully to " + emailModel.receiver + " with subject " + emailModel.subject)
+        try {
+            mailSender.send(mimeMessage)
+            return ResponseEntity.ok().body("Mail sent successfully to " + emailModel.receiver + " with subject " + emailModel.subject)
+        } catch (e: MailAuthenticationException) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication of user " + senderAddress + " failed")
+        } catch (e: MailSendException) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Mail failed to sent to " + emailModel.receiver + " with subject " + emailModel.subject)
+        } catch (e: MailException) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.message)
+        }
     }
 }
