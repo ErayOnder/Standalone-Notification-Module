@@ -58,7 +58,7 @@ class EmailService(
             return ResponseEntity.status(
                 HttpStatus.INTERNAL_SERVER_ERROR,
             ).body("Mail failed to sent to " + emailModel.receiver + " with subject " + emailModel.subject)
-        } catch (e: MailException) {
+        } catch (e: Exception) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.message)
         }
     }
