@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: NotificationService
+
+  mail:
+    host: localhost
+    port: 4247
+    username: test_user
+    password: password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
+        transport:
+          protocol: smtp
+        debug: true
+
+cloud:
+  aws:
+    region:
+      auto: true
+      static: eu-north-1
+    credentials:
+      access-key: TEST_KEY
+      secret-key: TEST_SECRET
+    sender: test@email.com
+
+notification-service:
+  email.enabled: true
+  sms.enabled: true
+  push.enabled: true
