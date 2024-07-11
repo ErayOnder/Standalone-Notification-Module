@@ -11,7 +11,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl
 @ConditionalOnProperty("notification-service.email.enabled", havingValue = "true")
 @EnableConfigurationProperties(SMTPProperties::class)
 class SMTPConfig(
-    private val smtpProperties: SMTPProperties
+    private val smtpProperties: SMTPProperties,
 ) {
     @Bean("smtpJavaMailSender")
     fun javaMailSender(): JavaMailSender {

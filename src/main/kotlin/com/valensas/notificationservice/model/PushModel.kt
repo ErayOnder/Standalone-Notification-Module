@@ -4,5 +4,5 @@ data class PushModel(
     val title: String,
     val body: String,
     val token: String,
-    val channel: PushChannel
+    val channel: PushChannel,
 )

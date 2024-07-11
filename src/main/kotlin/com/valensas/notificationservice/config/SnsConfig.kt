@@ -8,14 +8,15 @@ import software.amazon.awssdk.services.sns.SnsClient
 
 @Configuration
 class SnsConfig(
-    private val awsProperties: AWSProperties
+    private val awsProperties: AWSProperties,
 ) {
     @Bean
     fun snsClient(): SnsClient {
-        val basicAWSCredentials = AwsBasicCredentials.create(
-            awsProperties.credentials.accessKey,
-            awsProperties.credentials.secretKey
-        )
+        val basicAWSCredentials =
+            AwsBasicCredentials.create(
+                awsProperties.credentials.accessKey,
+                awsProperties.credentials.secretKey,
+            )
         return SnsClient.builder()
             .credentialsProvider(StaticCredentialsProvider.create(basicAWSCredentials))
             .region(awsProperties.region.static)

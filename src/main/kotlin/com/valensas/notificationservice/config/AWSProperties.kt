@@ -4,17 +4,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import software.amazon.awssdk.regions.Region
 
 @ConfigurationProperties(prefix = "cloud.aws")
-data class AWSProperties (
+data class AWSProperties(
     val credentials: AWSCredentials,
-    val region: AWSRegion
+    val region: AWSRegion,
 )
 
-data class AWSCredentials (
+data class AWSCredentials(
     val accessKey: String,
-    val secretKey: String
+    val secretKey: String,
 )
 
-data class AWSRegion (
+data class AWSRegion(
     val static: Region,
-    val auto: Boolean
+    val auto: Boolean,
 )

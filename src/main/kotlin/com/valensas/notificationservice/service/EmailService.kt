@@ -1,27 +1,28 @@
 package com.valensas.notificationservice.service
 
-import com.valensas.notificationservice.model.EmailModel
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.ResponseEntity
-import org.springframework.mail.javamail.JavaMailSender
-import org.springframework.stereotype.Service
 import com.valensas.notificationservice.model.EmailChannel
+import com.valensas.notificationservice.model.EmailModel
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
-import org.springframework.mail.*
+import org.springframework.http.ResponseEntity
+import org.springframework.mail.MailAuthenticationException
+import org.springframework.mail.MailException
+import org.springframework.mail.MailSendException
+import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
+import org.springframework.stereotype.Service
 
 @Service
 class EmailService(
     @Qualifier("sesJavaMailSender")
     private val sesJavaMailSender: JavaMailSender,
-    @Value("\${cloud.aws.sender}")
-    private val awsSender: String,
-
     @Qualifier("smtpJavaMailSender")
     private val smtpJavaMailSender: JavaMailSender,
+    @Value("\${cloud.aws.sender}")
+    private val awsSender: String,
     @Value("\${spring.mail.username}")
-    private val smtpSender: String
+    private val smtpSender: String,
 ) {
     fun send(emailModel: EmailModel): ResponseEntity<String> {
         val mailSender: JavaMailSender
@@ -54,7 +55,9 @@ class EmailService(
         } catch (e: MailAuthenticationException) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication of user " + senderAddress + " failed")
         } catch (e: MailSendException) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Mail failed to sent to " + emailModel.receiver + " with subject " + emailModel.subject)
+            return ResponseEntity.status(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            ).body("Mail failed to sent to " + emailModel.receiver + " with subject " + emailModel.subject)
         } catch (e: MailException) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.message)
         }

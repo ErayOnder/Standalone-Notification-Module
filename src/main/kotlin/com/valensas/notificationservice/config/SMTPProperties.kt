@@ -8,5 +8,5 @@ data class SMTPProperties(
     val port: Int,
     val username: String,
     val password: String,
-    val properties: Map<String, String>
+    val properties: Map<String, String>,
 )

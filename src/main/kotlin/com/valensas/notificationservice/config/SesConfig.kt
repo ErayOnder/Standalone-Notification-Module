@@ -12,14 +12,15 @@ import software.amazon.awssdk.services.ses.SesClient
 @Configuration
 @ConditionalOnProperty("notification-service.email.enabled", havingValue = "true")
 class SesConfig(
-    private val awsProperties: AWSProperties
+    private val awsProperties: AWSProperties,
 ) {
     @Bean
     fun sesClient(): SesClient {
-        val credentials = AwsBasicCredentials.create(
-            awsProperties.credentials.accessKey,
-            awsProperties.credentials.secretKey
-        )
+        val credentials =
+            AwsBasicCredentials.create(
+                awsProperties.credentials.accessKey,
+                awsProperties.credentials.secretKey,
+            )
         return SesClient.builder()
             .credentialsProvider(StaticCredentialsProvider.create(credentials))
             .region(awsProperties.region.static)
