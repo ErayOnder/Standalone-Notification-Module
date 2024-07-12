@@ -9,6 +9,8 @@ The application.yaml file contains placeholders within ${} for sensitive informa
 Replace these placeholders with actual values in your local environment or deployment platform.
 This ensures secure and personalized configuration for services like SMTP and AWS SES.
 
+You can only use one of the channels below.
+
 For AWS SES:
 ```yaml
 cloud:
@@ -19,7 +21,6 @@ cloud:
     credentials:
       access-key: ${AWS_ACCESS_KEY}
       secret-key: ${AWS_SECRET_KEY}
-    sender: ${AWS_SENDER_EMAIL}
 ```
 
 For SMTP:
@@ -42,6 +43,24 @@ spring:
           protocol: smtp
         debug: true
 ```
+After you provided the necessary credentials for your preferred service, you must fill the notification-service.email.service part in application.yaml file accordingly.
+
+For AWS SES:
+```yaml
+notification-service:
+  email:
+    service: 'ses'
+    sender: 'example@email.com'
+```
+For SMTP:
+```yaml
+notification-service:
+  email:
+    service: 'smtp'
+    sender: 'example@email.com'
+```
+By specifying the desired email provider in the channel field, you can choose between SMTP and AWS SES for sending your email notifications.
+
 
 ### Running the Service
 You can run the application directly on your local machine without needing to install a Servlet container.
@@ -75,12 +94,5 @@ POST http://localhost:8080/v1/email
         "htmlMessage": "Email HTML Content"
     },
     "subject": "Email Subject",
-    "channel": "AWS"
 }
 ```
-
-### Channel Options
-- "SMTP" for sending via SMTP.
-- "SES" for sending via AWS SES.
-
-By specifying the desired email provider in the channel field, you can choose between SMTP and AWS SES for sending your email notifications.
