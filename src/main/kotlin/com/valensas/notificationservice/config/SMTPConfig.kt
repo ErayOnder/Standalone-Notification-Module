@@ -1,6 +1,7 @@
 package com.valensas.notificationservice.config
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.boot.autoconfigure.mail.MailProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -9,9 +10,9 @@ import org.springframework.mail.javamail.JavaMailSenderImpl
 
 @Configuration
 @ConditionalOnProperty("notification-service.email.enabled", havingValue = "true")
-@EnableConfigurationProperties(SMTPProperties::class)
+@EnableConfigurationProperties(MailProperties::class)
 class SMTPConfig(
-    private val smtpProperties: SMTPProperties,
+    private val smtpProperties: MailProperties,
 ) {
     @Bean("smtpJavaMailSender")
     fun javaMailSender(): JavaMailSender {
