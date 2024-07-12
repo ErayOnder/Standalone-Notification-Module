@@ -27,4 +27,6 @@ cloud:
     sender: test@email.com
 
 notification-service:
-  email.enabled: true
+  email:
+    service: "smtpw"
+    sender: "test@example.com"

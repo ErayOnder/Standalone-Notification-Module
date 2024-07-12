@@ -2,6 +2,7 @@ package com.valensas.notificationservice.config
 
 import io.awspring.cloud.ses.SimpleEmailServiceJavaMailSender
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.mail.javamail.JavaMailSender
@@ -10,7 +11,8 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.services.ses.SesClient
 
 @Configuration
-@ConditionalOnProperty("notification-service.email.enabled", havingValue = "true")
+@ConditionalOnProperty("notification-service.email.service", havingValue = "ses")
+@EnableConfigurationProperties(AWSProperties::class)
 class SesConfig(
     private val awsProperties: AWSProperties,
 ) {
@@ -27,6 +29,6 @@ class SesConfig(
             .build()
     }
 
-    @Bean("sesJavaMailSender")
+    @Bean
     fun javaMailSender(sesClient: SesClient): JavaMailSender = SimpleEmailServiceJavaMailSender(sesClient)
 }

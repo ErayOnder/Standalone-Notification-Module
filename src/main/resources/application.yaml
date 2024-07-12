@@ -27,4 +27,6 @@ cloud:
     sender: ${AWS_SENDER_EMAIL}
 
 notification-service:
-  email.enabled: true
+  email:
+    service: ${EMAIL_SERVICE}
+    sender: ${SENDER_EMAIL}

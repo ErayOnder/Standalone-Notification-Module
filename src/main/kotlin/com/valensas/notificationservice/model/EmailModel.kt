@@ -4,7 +4,6 @@ data class EmailModel(
     val receiver: String,
     val body: EmailBody,
     val subject: String,
-    val channel: EmailChannel,
 )
 
 data class EmailBody(
