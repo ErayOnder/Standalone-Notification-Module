@@ -22,11 +22,9 @@ cloud:
       auto: true
       static: eu-north-1
     credentials:
-      access-key: "${AWS_ACCESS_KEY}"
-      secret-key: "${AWS_SECRET_KEY}"
-    sender: "${AWS_SENDER_EMAIL}"
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    sender: ${AWS_SENDER_EMAIL}
 
 notification-service:
   email.enabled: true
-  sms.enabled: true
-  push.enabled: true

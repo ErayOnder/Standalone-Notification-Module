@@ -28,5 +28,3 @@ cloud:
 
 notification-service:
   email.enabled: true
-  sms.enabled: true
-  push.enabled: true
