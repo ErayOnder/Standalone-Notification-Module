@@ -105,49 +105,49 @@ class EmailServiceTest {
     }
 
     @Test
-    fun `send returns 200 response for aws channel`() {
+    fun `sender success for aws channel`() {
         Mockito.`when`(sesMailSender.createMimeMessage()).thenReturn(Mockito.mock(MimeMessage::class.java))
         val response = emailService.send(awsEmailModel)
 
         assertEquals(HttpStatus.OK, response.statusCode)
-        assertEquals("Mail sent successfully to ${awsEmailModel.receiver} with subject ${awsEmailModel.subject}", response.body)
+        assertEquals("Mail sent successfully to ${awsEmailModel.receiver} with subject ${awsEmailModel.subject}.", response.body)
     }
 
     @Test
-    fun `send returns 200 response for smtp channel`() {
+    fun `sender success for smtp channel`() {
         Mockito.`when`(smtpMailSender.createMimeMessage()).thenReturn(Mockito.mock(MimeMessage::class.java))
         val response = emailService.send(smtpEmailModel)
 
         assertEquals(HttpStatus.OK, response.statusCode)
-        assertEquals("Mail sent successfully to ${smtpEmailModel.receiver} with subject ${smtpEmailModel.subject}", response.body)
+        assertEquals("Mail sent successfully to ${smtpEmailModel.receiver} with subject ${smtpEmailModel.subject}.", response.body)
     }
 
     @Test
-    fun `send returns 401 response for aws channel`() {
+    fun `sender authentication fail for aws channel`() {
         Mockito.`when`(sesMailSender.createMimeMessage()).thenReturn(Mockito.mock(MimeMessage::class.java))
         Mockito.`when`(sesMailSender.send(Mockito.any(MimeMessage::class.java))).thenThrow(
             MailAuthenticationException(""),
         )
         val response = emailService.send(awsEmailModel)
 
-        assertEquals(HttpStatus.UNAUTHORIZED, response.statusCode)
-        assertEquals("Authentication of user $awsSender failed", response.body)
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.statusCode)
+        assertEquals("Authentication of server configurations failed.", response.body)
     }
 
     @Test
-    fun `send returns 401 response for smtp channel`() {
+    fun `sender authentication fail for smtp channel`() {
         Mockito.`when`(smtpMailSender.createMimeMessage()).thenReturn(Mockito.mock(MimeMessage::class.java))
         Mockito.`when`(smtpMailSender.send(Mockito.any(MimeMessage::class.java))).thenThrow(
             MailAuthenticationException(""),
         )
         val response = emailService.send(smtpEmailModel)
 
-        assertEquals(HttpStatus.UNAUTHORIZED, response.statusCode)
-        assertEquals("Authentication of user $smtpSender failed", response.body)
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.statusCode)
+        assertEquals("Authentication of server configurations failed.", response.body)
     }
 
     @Test
-    fun `send returns 500 response for aws channel`() {
+    fun `sender fails to send mail for aws channel`() {
         Mockito.`when`(sesMailSender.createMimeMessage()).thenReturn(Mockito.mock(MimeMessage::class.java))
         Mockito.`when`(sesMailSender.send(Mockito.any(MimeMessage::class.java))).thenThrow(
             MailSendException(""),
@@ -155,11 +155,11 @@ class EmailServiceTest {
         val response = emailService.send(awsEmailModel)
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.statusCode)
-        assertEquals("Mail failed to sent to ${awsEmailModel.receiver} with subject ${awsEmailModel.subject}", response.body)
+        assertEquals("Mail failed to sent to ${awsEmailModel.receiver} with subject ${awsEmailModel.subject}.", response.body)
     }
 
     @Test
-    fun `send returns 500 response for smtp channel`() {
+    fun `sender fails to send mail for smtp channel`() {
         Mockito.`when`(smtpMailSender.createMimeMessage()).thenReturn(Mockito.mock(MimeMessage::class.java))
         Mockito.`when`(smtpMailSender.send(Mockito.any(MimeMessage::class.java))).thenThrow(
             MailSendException(""),
@@ -167,7 +167,7 @@ class EmailServiceTest {
         val response = emailService.send(smtpEmailModel)
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.statusCode)
-        assertEquals("Mail failed to sent to ${smtpEmailModel.receiver} with subject ${smtpEmailModel.subject}", response.body)
+        assertEquals("Mail failed to sent to ${smtpEmailModel.receiver} with subject ${smtpEmailModel.subject}.", response.body)
     }
 
     @Test

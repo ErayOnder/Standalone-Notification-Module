@@ -50,19 +50,15 @@ class EmailService(
 
         try {
             mailSender.send(mimeMessage)
-            return ResponseEntity.ok().body("Mail sent successfully to ${emailModel.receiver} with subject ${emailModel.subject}")
+            return ResponseEntity.ok().body("Mail sent successfully to ${emailModel.receiver} with subject ${emailModel.subject}.")
         } catch (e: Exception) {
-            return when (e) {
-                is MailAuthenticationException ->
-                    ResponseEntity.status(
-                        HttpStatus.UNAUTHORIZED,
-                    ).body("Authentication of user $senderAddress failed")
-                is MailSendException ->
-                    ResponseEntity.status(
-                        HttpStatus.INTERNAL_SERVER_ERROR,
-                    ).body("Mail failed to sent to ${emailModel.receiver} with subject ${emailModel.subject}")
-                else -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.message)
-            }
+            val responseMessage =
+                when (e) {
+                    is MailAuthenticationException -> "Authentication of server configurations failed."
+                    is MailSendException -> "Mail failed to sent to ${emailModel.receiver} with subject ${emailModel.subject}."
+                    else -> e.message ?: "An unknown error occurred."
+                }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseMessage)
         }
     }
 }
