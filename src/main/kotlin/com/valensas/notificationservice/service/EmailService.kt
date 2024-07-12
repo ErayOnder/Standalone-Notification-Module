@@ -53,8 +53,14 @@ class EmailService(
             return ResponseEntity.ok().body("Mail sent successfully to ${emailModel.receiver} with subject ${emailModel.subject}")
         } catch (e: Exception) {
             return when (e) {
-                is MailAuthenticationException -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication of user $senderAddress failed")
-                is MailSendException -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Mail failed to sent to ${emailModel.receiver} with subject ${emailModel.subject}")
+                is MailAuthenticationException ->
+                    ResponseEntity.status(
+                        HttpStatus.UNAUTHORIZED,
+                    ).body("Authentication of user $senderAddress failed")
+                is MailSendException ->
+                    ResponseEntity.status(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                    ).body("Mail failed to sent to ${emailModel.receiver} with subject ${emailModel.subject}")
                 else -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.message)
             }
         }
