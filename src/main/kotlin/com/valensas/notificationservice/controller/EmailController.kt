@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 class EmailController(
     private val emailService: EmailService,
 ) {
-    @PostMapping("/v1/email")
+    @PostMapping("/email")
     fun sendMail(
         @RequestBody emailModel: EmailModel,
     ): ResponseEntity<String> = emailService.send(emailModel)

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: NotificationService
+    name: notification
 
   mail:
     host: ${SMTP_HOST}
