@@ -25,6 +25,9 @@ dependencies {
     implementation("io.awspring.cloud:spring-cloud-aws-ses:3.1.0")
     implementation("io.awspring.cloud:spring-cloud-aws-sns:3.1.0")
 
+    // Twilio
+    implementation("com.twilio.sdk:twilio:10.4.1")
+
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
