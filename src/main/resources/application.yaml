@@ -29,3 +29,5 @@ notification-service:
   email:
     service: ${EMAIL_SERVICE}
     sender: ${SENDER_EMAIL}
+  sms:
+    service: ${SMS_SERVICE}
