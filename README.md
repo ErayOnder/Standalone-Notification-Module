@@ -17,7 +17,7 @@ cloud:
   aws:
     region:
       auto: true
-      static: eu-north-1
+      static: ${AWS_REGION}
     credentials:
       access-key: ${AWS_ACCESS_KEY}
       secret-key: ${AWS_SECRET_KEY}
@@ -41,7 +41,7 @@ spring:
           starttls.enable: true
         transport:
           protocol: smtp
-        debug: true
+        debug: ${SMTP_DEBUG}
 ```
 After you provided the necessary credentials for your preferred service, you must fill the notification-service.email.service part in application.yaml file accordingly.
 
@@ -93,6 +93,6 @@ POST http://localhost:8080/v1/email
         "plainMessage": "Email Plain Content",
         "htmlMessage": "Email HTML Content"
     },
-    "subject": "Email Subject",
+    "subject": "Email Subject"
 }
 ```
