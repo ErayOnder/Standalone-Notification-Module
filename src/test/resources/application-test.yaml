@@ -24,7 +24,6 @@ cloud:
     credentials:
       access-key: TEST_KEY
       secret-key: TEST_SECRET
-    sender: test@email.com
 
 notification-service:
   email:
