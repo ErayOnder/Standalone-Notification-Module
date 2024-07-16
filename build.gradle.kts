@@ -23,6 +23,7 @@ dependencies {
     // AWS
     implementation(platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.0"))
     implementation("io.awspring.cloud:spring-cloud-aws-ses:3.1.0")
+    implementation("io.awspring.cloud:spring-cloud-aws-starter-sns:3.1.0")
 
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
