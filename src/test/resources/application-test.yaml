@@ -14,7 +14,7 @@ spring:
           starttls.enable: true
         transport:
           protocol: smtp
-        debug: true
+        debug: false
 
 cloud:
   aws:
@@ -28,5 +28,5 @@ cloud:
 
 notification-service:
   email:
-    service: "smtpw"
+    service: "smtp"
     sender: "test@example.com"
