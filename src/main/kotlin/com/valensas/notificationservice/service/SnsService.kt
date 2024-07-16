@@ -31,7 +31,7 @@ class SnsService(
 
         try {
             snsClient.publish(request)
-            return ResponseEntity.ok().body("SMS sent successfully to ${smsModel.receiver}")
+            return ResponseEntity.ok("SMS sent successfully to ${smsModel.receiver}")
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(e.message)
         }
