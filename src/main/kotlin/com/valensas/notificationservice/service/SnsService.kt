@@ -15,6 +15,8 @@ class SnsService(
     private val snsClient: SnsClient,
 ) : SmsService {
     override fun send(smsModel: SmsModel): ResponseEntity<String> {
+        smsModel.type ?: return ResponseEntity.badRequest().body("SMS 'type' attribute is required.")
+
         val request =
             PublishRequest.builder()
                 .phoneNumber(smsModel.receiver)
