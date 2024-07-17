@@ -8,4 +8,7 @@ data class SmsModel(
     init {
         require(type?.lowercase() == "promotional" || type?.lowercase() == "transactional" || type == null)
     }
+
+    val formattedReceiver: String
+        get() = receiver.replace(" ", "")
 }

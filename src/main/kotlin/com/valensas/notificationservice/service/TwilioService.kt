@@ -23,13 +23,11 @@ class TwilioService(
         try {
             val message =
                 Message.creator(
-                    PhoneNumber(smsModel.receiver),
+                    PhoneNumber(smsModel.formattedReceiver),
                     PhoneNumber(sender),
                     smsModel.body,
                 ).create()
-            return ResponseEntity.ok(
-                "SMS sent successfully to ${smsModel.receiver}",
-            )
+            return ResponseEntity.ok("SMS sent successfully to ${smsModel.formattedReceiver}")
         } catch (e: ApiException) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.message)
         }
