@@ -43,18 +43,18 @@ spring:
           protocol: smtp
         debug: ${SMTP_DEBUG}
 ```
-After you provided the necessary credentials for your preferred service, you must fill the notification-service.email.service part in application.yaml file accordingly.
+After you provided the necessary credentials for your preferred service, you must fill the notification.email.service part in `application.yaml` file accordingly.
 
 For AWS SES:
 ```yaml
-notification-service:
+notification:
   email:
     service: 'ses'
     sender: 'example@email.com'
 ```
 For SMTP:
 ```yaml
-notification-service:
+notification:
   email:
     service: 'smtp'
     sender: 'example@email.com'

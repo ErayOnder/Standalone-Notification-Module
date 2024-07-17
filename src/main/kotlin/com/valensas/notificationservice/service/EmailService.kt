@@ -12,10 +12,10 @@ import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
 
 @Service
-@ConditionalOnProperty("notification-service.email.service")
+@ConditionalOnProperty("notification.email.service")
 class EmailService(
     private val mailSender: JavaMailSender,
-    @Value("\${notification-service.email.sender}")
+    @Value("\${notification.email.sender}")
     private val senderAddress: String,
 ) {
     fun send(emailModel: EmailModel): ResponseEntity<String> {

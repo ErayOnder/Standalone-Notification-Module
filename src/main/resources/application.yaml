@@ -30,7 +30,7 @@ twilio:
   auth-token: ${TWILIO_AUTH_TOKEN}
   from-phone-number: ${TWILIO_FROM_PHONE_NUMBER}
 
-notification-service:
+notification:
   email:
     service: ${EMAIL_SERVICE}
     sender: ${SENDER_EMAIL}
