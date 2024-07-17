@@ -2,6 +2,7 @@ package com.valensas.notificationservice.service
 
 import com.valensas.notificationservice.model.SmsModel
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.sns.SnsClient
@@ -33,7 +34,7 @@ class SnsService(
             snsClient.publish(request)
             return ResponseEntity.ok("SMS sent successfully to ${smsModel.receiver}")
         } catch (e: Exception) {
-            return ResponseEntity.badRequest().body(e.message)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.message)
         }
     }
 }
