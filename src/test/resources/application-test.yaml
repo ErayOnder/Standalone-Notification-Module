@@ -25,7 +25,14 @@ cloud:
       access-key: TEST_KEY
       secret-key: TEST_SECRET
 
+twilio:
+  account-sid: TEST_SID
+  auth-token: TEST_TOKEN
+  from-phone-number: +12345678900
+
 notification:
   email:
-    service: "smtp"
-    sender: "test@example.com"
+    service: smtp
+    sender: test@example.com
+  sms:
+    service: twilio

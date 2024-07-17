@@ -21,11 +21,13 @@ import org.springframework.mail.MailSendException
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestPropertySource
 import kotlin.test.assertEquals
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @ActiveProfiles("test")
+@TestPropertySource(properties = ["notification.sms.service=null"])
 class EmailServiceTest {
     @Mock
     private lateinit var mailSender: JavaMailSender
