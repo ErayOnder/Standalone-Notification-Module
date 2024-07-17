@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@ConditionalOnProperty("notification-service.sms.service")
+@ConditionalOnProperty("notification.sms.service")
 class SmsController(
     @Qualifier("smsService")
     private val smsService: SmsService,

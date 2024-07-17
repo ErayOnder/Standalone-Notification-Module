@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@ConditionalOnProperty("notification-service.sms.service", havingValue = "twilio")
+@ConditionalOnProperty("notification.sms.service", havingValue = "twilio")
 @EnableConfigurationProperties(TwilioProperties::class)
 class TwilioConfig(
     private val twilioProperties: TwilioProperties,

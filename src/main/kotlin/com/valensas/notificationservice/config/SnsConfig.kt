@@ -9,7 +9,7 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.services.sns.SnsClient
 
 @Configuration
-@ConditionalOnProperty("notification-service.sms.service", havingValue = "sns")
+@ConditionalOnProperty("notification.sms.service", havingValue = "sns")
 @EnableConfigurationProperties(AWSProperties::class)
 class SnsConfig(
     private val awsProperties: AWSProperties,

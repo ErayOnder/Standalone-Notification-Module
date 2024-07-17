@@ -9,7 +9,7 @@ import software.amazon.awssdk.services.sns.model.MessageAttributeValue
 import software.amazon.awssdk.services.sns.model.PublishRequest
 
 @Service("smsService")
-@ConditionalOnProperty("notification-service.sms.service", havingValue = "sns")
+@ConditionalOnProperty("notification.sms.service", havingValue = "sns")
 class SnsService(
     private val snsClient: SnsClient,
 ) : SmsService {

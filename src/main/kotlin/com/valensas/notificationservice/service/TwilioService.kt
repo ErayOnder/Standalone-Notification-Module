@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 @Service("smsService")
-@ConditionalOnProperty("notification-service.sms.service", havingValue = "twilio")
+@ConditionalOnProperty("notification.sms.service", havingValue = "twilio")
 @EnableConfigurationProperties(TwilioProperties::class)
 class TwilioService(
     @Value("\${twilio.from-phone-number}")
