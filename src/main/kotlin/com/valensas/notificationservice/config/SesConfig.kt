@@ -11,7 +11,7 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.services.ses.SesClient
 
 @Configuration
-@ConditionalOnProperty("notification-service.email.service", havingValue = "ses")
+@ConditionalOnProperty("notification.email.service", havingValue = "ses")
 @EnableConfigurationProperties(AWSProperties::class)
 class SesConfig(
     private val awsProperties: AWSProperties,

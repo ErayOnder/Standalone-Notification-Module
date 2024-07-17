@@ -25,7 +25,7 @@ cloud:
       access-key: TEST_KEY
       secret-key: TEST_SECRET
 
-notification-service:
+notification:
   email:
     service: "smtp"
     sender: "test@example.com"

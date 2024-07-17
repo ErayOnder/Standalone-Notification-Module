@@ -25,7 +25,7 @@ cloud:
       access-key: ${AWS_ACCESS_KEY}
       secret-key: ${AWS_SECRET_KEY}
 
-notification-service:
+notification:
   email:
     service: ${EMAIL_SERVICE}
     sender: ${SENDER_EMAIL}
