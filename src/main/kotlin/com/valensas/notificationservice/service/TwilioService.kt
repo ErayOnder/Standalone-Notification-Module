@@ -27,7 +27,7 @@ class TwilioService(
                     PhoneNumber(sender),
                     smsModel.body,
                 ).create()
-            return ResponseEntity.ok("SMS sent successfully to ${smsModel.formattedReceiver}")
+            return ResponseEntity.ok("SMS sent successfully to ${smsModel.formattedReceiver}.")
         } catch (e: ApiException) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.message)
         }
