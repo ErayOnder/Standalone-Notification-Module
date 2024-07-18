@@ -2,7 +2,7 @@ package com.valensas.notificationservice.service
 
 import com.valensas.notificationservice.model.EmailModel
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.mail.MailAuthenticationException
@@ -12,7 +12,7 @@ import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
 
 @Service
-@ConditionalOnProperty("notification.email.service")
+@ConditionalOnExpression("'\${notification.email.service' == 'smtp} || '\${notification.email.service' == 'ses'}")
 class EmailService(
     private val mailSender: JavaMailSender,
     @Value("\${notification.email.sender}")
