@@ -20,7 +20,7 @@ class TwilioService(
 ) : SmsService {
     override fun send(smsModel: SmsModel): ResponseEntity<String> {
         val responseList = mutableListOf<String>()
-        for (receiver in smsModel.formattedReceiver) {
+        for (receiver in smsModel.formattedReceivers) {
             try {
                 Message.creator(
                     PhoneNumber(receiver),

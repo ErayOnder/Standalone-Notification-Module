@@ -9,7 +9,7 @@ data class SmsModel(
         require(type?.lowercase() == "promotional" || type?.lowercase() == "transactional" || type == null)
     }
 
-    val formattedReceiver: List<String>
+    val formattedReceivers: List<String>
         get() = receivers.map { receiver -> formatPhoneNumber(receiver) }
 }
 

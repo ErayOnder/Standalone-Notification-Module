@@ -65,7 +65,7 @@ class SnsServiceTest {
     fun `sms sns publish success`() {
         val response = snsService.send(smsModel)
 
-        val responseList = smsModel.formattedReceiver.map { "$it: Sent successfully." }
+        val responseList = smsModel.formattedReceivers.map { "$it: Sent successfully." }
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals(responseList.joinToString("\n"), response.body)
@@ -78,7 +78,7 @@ class SnsServiceTest {
         ).thenThrow(AwsServiceException.builder().message("Error").build())
         val response = snsService.send(smsModel)
 
-        val responseList = smsModel.formattedReceiver.map { "$it: Failed to sent - Error" }
+        val responseList = smsModel.formattedReceivers.map { "$it: Failed to sent - Error" }
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals(responseList.joinToString("\n"), response.body)
@@ -100,8 +100,8 @@ class SnsServiceTest {
         val publishRequests = publishRequestCaptor.allValues
 
         assertEquals(smsModel.receivers.size, publishRequests.size)
-        for (i in 0 until smsModel.formattedReceiver.size) {
-            assertEquals(smsModel.formattedReceiver[i], publishRequests[i].phoneNumber())
+        for (i in 0 until smsModel.formattedReceivers.size) {
+            assertEquals(smsModel.formattedReceivers[i], publishRequests[i].phoneNumber())
             assertEquals(smsModel.body, publishRequests[i].message())
             assertEquals(smsModel.type, publishRequests[i].messageAttributes()["AWS.SNS.SMS.SMSType"]?.stringValue())
         }
@@ -115,8 +115,8 @@ class SnsServiceTest {
         val publishRequests = publishRequestCaptor.allValues
 
         assertEquals(smsModelFormatted.receivers.size, publishRequests.size)
-        for (i in 0 until smsModelFormatted.formattedReceiver.size) {
-            assertEquals(smsModelFormatted.formattedReceiver[i], publishRequests[i].phoneNumber())
+        for (i in 0 until smsModelFormatted.formattedReceivers.size) {
+            assertEquals(smsModelFormatted.formattedReceivers[i], publishRequests[i].phoneNumber())
             assertEquals(smsModelFormatted.body, publishRequests[i].message())
             assertEquals(smsModelFormatted.type, publishRequests[i].messageAttributes()["AWS.SNS.SMS.SMSType"]?.stringValue())
         }

@@ -67,7 +67,7 @@ class TwilioServiceTest {
         Mockito.`when`(messageCreator.create()).thenReturn(Mockito.mock(Message::class.java))
 
         val response = twilioService.send(smsModel)
-        val responseList = smsModel.formattedReceiver.map { "$it: Sent successfully." }
+        val responseList = smsModel.formattedReceivers.map { "$it: Sent successfully." }
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals(responseList.joinToString("\n"), response.body)
@@ -88,7 +88,7 @@ class TwilioServiceTest {
         Mockito.`when`(messageCreator.create()).thenThrow(ApiException("Error"))
 
         val response = twilioService.send(smsModel)
-        val responseList = smsModel.formattedReceiver.map { "$it: Failed to sent - Error" }
+        val responseList = smsModel.formattedReceivers.map { "$it: Failed to sent - Error" }
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals(responseList.joinToString("\n"), response.body)
@@ -122,7 +122,7 @@ class TwilioServiceTest {
 
         assertEquals(smsModel.body, stringCaptor.value)
         for (i in 0 until smsModel.receivers.size) {
-            assertEquals(smsModel.formattedReceiver[i], phoneNumberCaptor.allValues[2 * i].toString())
+            assertEquals(smsModel.formattedReceivers[i], phoneNumberCaptor.allValues[2 * i].toString())
             assertEquals(sender, phoneNumberCaptor.allValues[2 * i + 1].toString())
         }
         messageStatic.close()
@@ -154,7 +154,7 @@ class TwilioServiceTest {
 
         assertEquals(smsModelFormatted.body, stringCaptor.value)
         for (i in 0 until smsModelFormatted.receivers.size) {
-            assertEquals(smsModelFormatted.formattedReceiver[i], phoneNumberCaptor.allValues[2 * i].toString())
+            assertEquals(smsModelFormatted.formattedReceivers[i], phoneNumberCaptor.allValues[2 * i].toString())
             assertEquals(sender, phoneNumberCaptor.allValues[2 * i + 1].toString())
         }
         messageStatic.close()

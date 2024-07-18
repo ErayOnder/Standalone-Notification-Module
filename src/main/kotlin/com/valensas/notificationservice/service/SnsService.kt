@@ -32,7 +32,7 @@ class SnsService(
 
         val responseList = mutableListOf<String>()
 
-        for (receiver in smsModel.formattedReceiver) {
+        for (receiver in smsModel.formattedReceivers) {
             val request = requestBuilder.phoneNumber(receiver).build()
             try {
                 snsClient.publish(request)
