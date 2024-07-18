@@ -1,7 +1,7 @@
 package com.valensas.notificationservice.model
 
 data class SmsModel(
-    val receiver: String,
+    val receivers: List<String>,
     val body: String,
     val type: String?,
 ) {
@@ -9,6 +9,18 @@ data class SmsModel(
         require(type?.lowercase() == "promotional" || type?.lowercase() == "transactional" || type == null)
     }
 
-    val formattedReceiver: String
-        get() = receiver.replace(" ", "")
+    val formattedReceiver: List<String>
+        get() = receivers.map { receiver -> formatPhoneNumber(receiver) }
+}
+
+fun formatPhoneNumber(phoneNumber: String): String {
+    val prefix =
+        if (phoneNumber[0] == '+') {
+            ""
+        } else if (phoneNumber[0] == '0') {
+            "+9"
+        } else {
+            "+90"
+        }
+    return (prefix + phoneNumber).replace(" ", "")
 }
