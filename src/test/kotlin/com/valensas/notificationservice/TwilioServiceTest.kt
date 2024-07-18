@@ -41,7 +41,7 @@ class TwilioServiceTest {
             )
         smsModel =
             SmsModel(
-                receiver = "+98765432100",
+                receivers = listOf("+98765432100", "+98765432101"),
                 body = "This is a sms.",
                 type = null,
             )
@@ -61,9 +61,10 @@ class TwilioServiceTest {
         Mockito.`when`(messageCreator.create()).thenReturn(Mockito.mock(Message::class.java))
 
         val response = twilioService.send(smsModel)
-        assertEquals(HttpStatus.OK, response.statusCode)
-        assertEquals("SMS sent successfully to ${smsModel.receiver}.", response.body)
+        val responseList = smsModel.formattedReceiver.map { "$it: Sent successfully." }
 
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(responseList.joinToString("\n"), response.body)
         messageStatic.close()
     }
 
@@ -78,10 +79,13 @@ class TwilioServiceTest {
                 Mockito.anyString(),
             )
         }.thenReturn(messageCreator)
-        Mockito.`when`(messageCreator.create()).thenThrow(ApiException(""))
+        Mockito.`when`(messageCreator.create()).thenThrow(ApiException("Error"))
 
         val response = twilioService.send(smsModel)
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.statusCode)
+        val responseList = smsModel.formattedReceiver.map { "$it: Failed to sent - Error" }
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(responseList.joinToString("\n"), response.body)
 
         messageStatic.close()
     }
@@ -99,18 +103,22 @@ class TwilioServiceTest {
         }.thenReturn(messageCreator)
         Mockito.`when`(messageCreator.create()).thenReturn(Mockito.mock(Message::class.java))
         twilioService.send(smsModel)
-        messageStatic.verify {
-            Message.creator(
-                phoneNumberCaptor.capture(),
-                phoneNumberCaptor.capture(),
-                stringCaptor.capture(),
-            )
-        }
+        messageStatic.verify(
+            {
+                Message.creator(
+                    phoneNumberCaptor.capture(),
+                    phoneNumberCaptor.capture(),
+                    stringCaptor.capture(),
+                )
+            },
+            Mockito.times(smsModel.receivers.size),
+        )
 
-        assertEquals(smsModel.formattedReceiver, phoneNumberCaptor.allValues[0].toString())
-        assertEquals(sender, phoneNumberCaptor.allValues[1].toString())
         assertEquals(smsModel.body, stringCaptor.value)
-
+        assertEquals(sender, phoneNumberCaptor.allValues[1].toString())
+        for (i in 0 until smsModel.receivers.size) {
+            assertEquals(smsModel.formattedReceiver[i], phoneNumberCaptor.allValues[2 * i].toString())
+        }
         messageStatic.close()
     }
 }
