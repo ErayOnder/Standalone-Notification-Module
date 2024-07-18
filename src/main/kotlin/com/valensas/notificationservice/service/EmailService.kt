@@ -12,7 +12,7 @@ import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
 
 @Service
-@ConditionalOnExpression("'\${notification.email.service' == 'smtp} || '\${notification.email.service' == 'ses'}")
+@ConditionalOnExpression("'\${notification.email.service}' == 'smtp' || '\${notification.email.service}' == 'ses'")
 class EmailService(
     private val mailSender: JavaMailSender,
     @Value("\${notification.email.sender}")
