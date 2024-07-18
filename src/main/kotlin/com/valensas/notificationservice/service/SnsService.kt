@@ -2,7 +2,6 @@ package com.valensas.notificationservice.service
 
 import com.valensas.notificationservice.model.SmsModel
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.sns.SnsClient
@@ -17,9 +16,8 @@ class SnsService(
     override fun send(smsModel: SmsModel): ResponseEntity<String> {
         smsModel.type ?: return ResponseEntity.badRequest().body("SMS 'type' attribute is required.")
 
-        val request =
+        val requestBuilder =
             PublishRequest.builder()
-                .phoneNumber(smsModel.formattedReceiver)
                 .message(smsModel.body)
                 .messageAttributes(
                     HashMap<String, MessageAttributeValue>().apply {
@@ -30,13 +28,20 @@ class SnsService(
                                 .dataType("String").build(),
                         )
                     },
-                ).build()
+                )
 
-        try {
-            snsClient.publish(request)
-            return ResponseEntity.ok("SMS sent successfully to ${smsModel.formattedReceiver}")
-        } catch (e: Exception) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.message)
+        val responseList = mutableListOf<String>()
+
+        for (receiver in smsModel.formattedReceiver) {
+            val request = requestBuilder.phoneNumber(receiver).build()
+            try {
+                snsClient.publish(request)
+                responseList += "$receiver: Sent successfully."
+            } catch (e: Exception) {
+                responseList += "$receiver: Failed to sent - ${e.message ?: "Unknown error."}"
+            }
         }
+
+        return ResponseEntity.ok(responseList.joinToString("\n"))
     }
 }

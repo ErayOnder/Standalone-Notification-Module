@@ -41,21 +41,21 @@ class SnsServiceTest {
 
         smsModel =
             SmsModel(
-                "+1234567890",
+                listOf("+1234567890", "+9876543210"),
                 "Test SMS",
                 "Transactional",
             )
 
         smsModelFormatted =
             SmsModel(
-                "+90 123 456 78 90",
+                listOf("+90 123 456 78 90", "0 987 654 32 10", "555 444 33 22"),
                 "Test SMS",
                 "Transactional",
             )
 
         smsModelNull =
             SmsModel(
-                "+1234567890",
+                listOf("+1234567890", "+9876543210"),
                 "Test SMS",
                 null,
             )
@@ -65,8 +65,10 @@ class SnsServiceTest {
     fun `sms sns publish success`() {
         val response = snsService.send(smsModel)
 
+        val responseList = smsModel.formattedReceiver.map { "$it: Sent successfully." }
+
         assertEquals(HttpStatus.OK, response.statusCode)
-        assertEquals("SMS sent successfully to ${smsModel.formattedReceiver}", response.body)
+        assertEquals(responseList.joinToString("\n"), response.body)
     }
 
     @Test
@@ -76,7 +78,10 @@ class SnsServiceTest {
         ).thenThrow(AwsServiceException.builder().message("Error").build())
         val response = snsService.send(smsModel)
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.statusCode)
+        val responseList = smsModel.formattedReceiver.map { "$it: Failed to sent - Error" }
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(responseList.joinToString("\n"), response.body)
     }
 
     @Test
@@ -91,23 +96,29 @@ class SnsServiceTest {
     fun `sms sns publish request verification`() {
         snsService.send(smsModel)
 
-        Mockito.verify(snsClient).publish(publishRequestCaptor.capture())
-        val publishRequest = publishRequestCaptor.value
+        Mockito.verify(snsClient, Mockito.times(smsModel.receivers.size)).publish(publishRequestCaptor.capture())
+        val publishRequests = publishRequestCaptor.allValues
 
-        assertEquals(smsModel.formattedReceiver, publishRequest.phoneNumber())
-        assertEquals(smsModel.body, publishRequest.message())
-        assertEquals(smsModel.type, publishRequest.messageAttributes()["AWS.SNS.SMS.SMSType"]?.stringValue())
+        assertEquals(smsModel.receivers.size, publishRequests.size)
+        for (i in 0 until smsModel.formattedReceiver.size) {
+            assertEquals(smsModel.formattedReceiver[i], publishRequests[i].phoneNumber())
+            assertEquals(smsModel.body, publishRequests[i].message())
+            assertEquals(smsModel.type, publishRequests[i].messageAttributes()["AWS.SNS.SMS.SMSType"]?.stringValue())
+        }
     }
 
     @Test
     fun `sms sns publish request verification formatted`() {
         snsService.send(smsModelFormatted)
 
-        Mockito.verify(snsClient).publish(publishRequestCaptor.capture())
-        val publishRequest = publishRequestCaptor.value
+        Mockito.verify(snsClient, Mockito.times(smsModel.receivers.size)).publish(publishRequestCaptor.capture())
+        val publishRequests = publishRequestCaptor.allValues
 
-        assertEquals(smsModelFormatted.formattedReceiver, publishRequest.phoneNumber())
-        assertEquals(smsModelFormatted.body, publishRequest.message())
-        assertEquals(smsModelFormatted.type, publishRequest.messageAttributes()["AWS.SNS.SMS.SMSType"]?.stringValue())
+        assertEquals(smsModel.receivers.size, publishRequests.size)
+        for (i in 0 until smsModel.formattedReceiver.size) {
+            assertEquals(smsModel.formattedReceiver[i], publishRequests[i].phoneNumber())
+            assertEquals(smsModel.body, publishRequests[i].message())
+            assertEquals(smsModel.type, publishRequests[i].messageAttributes()["AWS.SNS.SMS.SMSType"]?.stringValue())
+        }
     }
 }
