@@ -16,7 +16,7 @@ class SnsService(
     override fun send(smsModel: SmsModel): ResponseEntity<String> {
         smsModel.type ?: return ResponseEntity.badRequest().body("SMS 'type' attribute is required.")
 
-        val requestBuilder =
+        val publisherRequestBuilder =
             PublishRequest.builder()
                 .message(smsModel.body)
                 .messageAttributes(
@@ -31,11 +31,9 @@ class SnsService(
                 )
 
         val responseList = mutableListOf<String>()
-
-        for (receiver in smsModel.formattedReceivers) {
-            val request = requestBuilder.phoneNumber(receiver).build()
+        smsModel.formattedReceivers.forEach { receiver ->
             try {
-                snsClient.publish(request)
+                snsClient.publish(publisherRequestBuilder.phoneNumber(receiver).build())
                 responseList += "$receiver: Sent successfully."
             } catch (e: Exception) {
                 responseList += "$receiver: Failed to sent - ${e.message ?: "Unknown error."}"
