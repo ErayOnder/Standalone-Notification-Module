@@ -26,6 +26,7 @@ class TwilioServiceTest {
     private var sender = "+12345678900"
     private lateinit var twilioService: TwilioService
     private lateinit var smsModel: SmsModel
+    private lateinit var smsModelFormatted: SmsModel
 
     @Captor
     private lateinit var phoneNumberCaptor: ArgumentCaptor<PhoneNumber>
@@ -35,15 +36,20 @@ class TwilioServiceTest {
 
     @BeforeEach
     fun init() {
-        twilioService =
-            TwilioService(
-                sender = sender,
-            )
+        twilioService = TwilioService(sender)
+
         smsModel =
             SmsModel(
-                receivers = listOf("+98765432100", "+98765432101"),
-                body = "This is a sms.",
-                type = null,
+                listOf("+98765432100", "+98765432101"),
+                "Test SMS",
+                null,
+            )
+
+        smsModelFormatted =
+            SmsModel(
+                listOf("+90 123 456 78 90", "0 987 654 32 10", "555 444 33 22"),
+                "Test SMS",
+                null,
             )
     }
 
@@ -115,9 +121,41 @@ class TwilioServiceTest {
         )
 
         assertEquals(smsModel.body, stringCaptor.value)
-        assertEquals(sender, phoneNumberCaptor.allValues[1].toString())
         for (i in 0 until smsModel.receivers.size) {
             assertEquals(smsModel.formattedReceiver[i], phoneNumberCaptor.allValues[2 * i].toString())
+            assertEquals(sender, phoneNumberCaptor.allValues[2 * i + 1].toString())
+        }
+        messageStatic.close()
+    }
+
+    @Test
+    fun `sms sns publish request verification formatted`() {
+        val messageCreator = Mockito.mock(MessageCreator::class.java)
+        val messageStatic = Mockito.mockStatic(Message::class.java)
+        messageStatic.`when`<Any> {
+            Message.creator(
+                Mockito.any(PhoneNumber::class.java),
+                Mockito.any(PhoneNumber::class.java),
+                Mockito.anyString(),
+            )
+        }.thenReturn(messageCreator)
+        Mockito.`when`(messageCreator.create()).thenReturn(Mockito.mock(Message::class.java))
+        twilioService.send(smsModelFormatted)
+        messageStatic.verify(
+            {
+                Message.creator(
+                    phoneNumberCaptor.capture(),
+                    phoneNumberCaptor.capture(),
+                    stringCaptor.capture(),
+                )
+            },
+            Mockito.times(smsModelFormatted.receivers.size),
+        )
+
+        assertEquals(smsModelFormatted.body, stringCaptor.value)
+        for (i in 0 until smsModelFormatted.receivers.size) {
+            assertEquals(smsModelFormatted.formattedReceiver[i], phoneNumberCaptor.allValues[2 * i].toString())
+            assertEquals(sender, phoneNumberCaptor.allValues[2 * i + 1].toString())
         }
         messageStatic.close()
     }
