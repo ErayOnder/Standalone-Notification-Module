@@ -1,10 +1,10 @@
 package com.valensas.notificationservice.service
 
-import com.twilio.exception.ApiException
 import com.twilio.rest.api.v2010.account.Message
 import com.twilio.type.PhoneNumber
 import com.valensas.notificationservice.config.TwilioProperties
 import com.valensas.notificationservice.model.SmsModel
+import com.valensas.notificationservice.model.validatePhoneNumber
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -22,13 +22,14 @@ class TwilioService(
         val responseList = mutableListOf<String>()
         smsModel.formattedReceivers.forEach { receiver ->
             try {
+                validatePhoneNumber(receiver)
                 Message.creator(
                     PhoneNumber(receiver),
                     PhoneNumber(sender),
                     smsModel.body,
                 ).create()
                 responseList += "$receiver: Sent successfully."
-            } catch (e: ApiException) {
+            } catch (e: Exception) {
                 responseList += "$receiver: Failed to sent - ${e.message ?: "Unknown error."}"
             }
         }

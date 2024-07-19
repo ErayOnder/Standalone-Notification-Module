@@ -20,3 +20,11 @@ fun formatPhoneNumber(phoneNumber: String): String {
     val number = phoneNumberUtil.parse(phoneNumber, "TR")
     return phoneNumberUtil.format(number, PhoneNumberUtil.PhoneNumberFormat.E164)
 }
+
+fun validatePhoneNumber(phoneNumber: String) {
+    val phoneNumberUtil = PhoneNumberUtil.getInstance()
+    val number = phoneNumberUtil.parse(phoneNumber, "TR")
+    if (!phoneNumberUtil.isValidNumber(number)) {
+        throw IllegalArgumentException("Invalid phone number.")
+    }
+}

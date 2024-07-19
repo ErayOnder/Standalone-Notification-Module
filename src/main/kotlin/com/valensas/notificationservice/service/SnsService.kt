@@ -1,6 +1,7 @@
 package com.valensas.notificationservice.service
 
 import com.valensas.notificationservice.model.SmsModel
+import com.valensas.notificationservice.model.validatePhoneNumber
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -33,6 +34,7 @@ class SnsService(
         val responseList = mutableListOf<String>()
         smsModel.formattedReceivers.forEach { receiver ->
             try {
+                validatePhoneNumber(receiver)
                 snsClient.publish(publisherRequestBuilder.phoneNumber(receiver).build())
                 responseList += "$receiver: Sent successfully."
             } catch (e: Exception) {
