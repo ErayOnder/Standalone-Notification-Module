@@ -1,5 +1,6 @@
 package com.valensas.notificationservice
 
+import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.twilio.exception.ApiException
 import com.twilio.rest.api.v2010.account.Message
 import com.twilio.rest.api.v2010.account.MessageCreator
@@ -38,16 +39,29 @@ class TwilioServiceTest {
     fun init() {
         twilioService = TwilioService(sender)
 
+        val phoneNumberUtil = PhoneNumberUtil.getInstance()
+
+        val exampleNumUS =
+            phoneNumberUtil.format(
+                phoneNumberUtil.getExampleNumber("US"),
+                PhoneNumberUtil.PhoneNumberFormat.E164,
+            )
+        val exampleNumTR =
+            phoneNumberUtil.format(
+                phoneNumberUtil.getExampleNumber("TR"),
+                PhoneNumberUtil.PhoneNumberFormat.E164,
+            )
+
         smsModel =
             SmsModel(
-                listOf("+98765432100", "+98765432101"),
+                listOf(exampleNumUS, exampleNumTR),
                 "Test SMS",
                 null,
             )
 
         smsModelFormatted =
             SmsModel(
-                listOf("+90 123 456 78 90", "0 987 654 32 10", "555 444 33 22"),
+                listOf("+90 532 456 78 90", "0 532 654 32 10", "553 444 33 22"),
                 "Test SMS",
                 null,
             )

@@ -1,5 +1,6 @@
 package com.valensas.notificationservice
 
+import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.valensas.notificationservice.model.SmsModel
 import com.valensas.notificationservice.service.SnsService
 import org.junit.jupiter.api.BeforeEach
@@ -39,23 +40,36 @@ class SnsServiceTest {
     fun init() {
         snsService = SnsService(snsClient)
 
+        val phoneNumberUtil = PhoneNumberUtil.getInstance()
+
+        val exampleNumUS =
+            phoneNumberUtil.format(
+                phoneNumberUtil.getExampleNumber("US"),
+                PhoneNumberUtil.PhoneNumberFormat.E164,
+            )
+        val exampleNumTR =
+            phoneNumberUtil.format(
+                phoneNumberUtil.getExampleNumber("TR"),
+                PhoneNumberUtil.PhoneNumberFormat.E164,
+            )
+
         smsModel =
             SmsModel(
-                listOf("+1234567890", "+9876543210"),
+                listOf(exampleNumUS, exampleNumTR),
                 "Test SMS",
                 "Transactional",
             )
 
         smsModelFormatted =
             SmsModel(
-                listOf("+90 123 456 78 90", "0 987 654 32 10", "555 444 33 22"),
+                listOf("+90 532 456 78 90", "0 533 654 32 10", "553 444 33 22"),
                 "Test SMS",
                 "Transactional",
             )
 
         smsModelNull =
             SmsModel(
-                listOf("+1234567890", "+9876543210"),
+                listOf(exampleNumUS, exampleNumTR),
                 "Test SMS",
                 null,
             )
