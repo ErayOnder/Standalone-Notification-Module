@@ -32,6 +32,7 @@ class SnsServiceTest {
     private lateinit var smsModel: SmsModel
     private lateinit var smsModelFormatted: SmsModel
     private lateinit var smsModelNull: SmsModel
+    private lateinit var smsModelInvalidNumbers: SmsModel
 
     @Captor
     private lateinit var publishRequestCaptor: ArgumentCaptor<PublishRequest>
@@ -53,6 +54,15 @@ class SnsServiceTest {
                 PhoneNumberUtil.PhoneNumberFormat.E164,
             )
 
+        val invalidExampleNumUS = phoneNumberUtil.format(
+            phoneNumberUtil.getInvalidExampleNumber("US"),
+            PhoneNumberUtil.PhoneNumberFormat.E164,
+        )
+        val invalidExampleNumTR = phoneNumberUtil.format(
+            phoneNumberUtil.getInvalidExampleNumber("TR"),
+            PhoneNumberUtil.PhoneNumberFormat.E164,
+        )
+
         smsModel =
             SmsModel(
                 listOf(exampleNumUS, exampleNumTR),
@@ -73,6 +83,12 @@ class SnsServiceTest {
                 "Test SMS",
                 null,
             )
+
+        smsModelInvalidNumbers = SmsModel(
+            listOf(invalidExampleNumUS, invalidExampleNumTR),
+            "Test SMS",
+            "Transactional",
+        )
     }
 
     @Test
@@ -104,6 +120,15 @@ class SnsServiceTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
         assertEquals("SMS 'type' attribute is required.", response.body)
+    }
+
+    @Test
+    fun `sms sns invalid phone number fail`() {
+        val response = snsService.send(smsModelInvalidNumbers)
+
+        val responseList = smsModelInvalidNumbers.formattedReceivers.map { "$it: Failed to sent - Invalid phone number." }
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(responseList.joinToString("\n"), response.body)
     }
 
     @Test
