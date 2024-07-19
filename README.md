@@ -169,11 +169,6 @@ POST http://localhost:8080/sms
 ```
 
 #### Receivers Format
-The **_receivers_** attribute is an array of phone numbers. Both services require the phone numbers to be in the E.164 format. However, the module can handle phone numbers in following formats:
-- +1234567890
-- +1 234 567 890
-- 05xxxxxxxx (for Turkish phone numbers)
-- 5xxxxxxxx (for Turkish phone numbers)
-
+The **_receivers_** attribute is an array of phone numbers. Both services require the phone numbers to be in the E.164 format. However, the module can automatically convert the phone numbers to the correct format as long as they are valid for given country code. The default country code is set to _"TR"_.
 #### Type Attribute
 The **_type_** attribute is only relevant to AWS SNS. You can choose between _"Promotional"_ and _"Transactional"_ for the type of SMS you want to send.

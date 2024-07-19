@@ -1,5 +1,7 @@
 package com.valensas.notificationservice.model
 
+import com.google.i18n.phonenumbers.PhoneNumberUtil
+
 data class SmsModel(
     val receivers: List<String>,
     val body: String,
@@ -14,13 +16,7 @@ data class SmsModel(
 }
 
 fun formatPhoneNumber(phoneNumber: String): String {
-    val prefix =
-        if (phoneNumber[0] == '+') {
-            ""
-        } else if (phoneNumber[0] == '0') {
-            "+9"
-        } else {
-            "+90"
-        }
-    return (prefix + phoneNumber).replace(" ", "")
+    val phoneNumberUtil = PhoneNumberUtil.getInstance()
+    val number = phoneNumberUtil.parse(phoneNumber, "TR")
+    return phoneNumberUtil.format(number, PhoneNumberUtil.PhoneNumberFormat.E164)
 }
