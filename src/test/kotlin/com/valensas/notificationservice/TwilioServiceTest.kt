@@ -6,6 +6,7 @@ import com.twilio.rest.api.v2010.account.Message
 import com.twilio.rest.api.v2010.account.MessageCreator
 import com.twilio.type.PhoneNumber
 import com.valensas.notificationservice.model.SmsModel
+import com.valensas.notificationservice.model.generatePhoneNumber
 import com.valensas.notificationservice.service.TwilioService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -40,49 +41,35 @@ class TwilioServiceTest {
     fun init() {
         twilioService = TwilioService(sender)
 
-        val phoneNumberUtil = PhoneNumberUtil.getInstance()
-
-        val exampleNumUS =
-            phoneNumberUtil.format(
-                phoneNumberUtil.getExampleNumber("US"),
-                PhoneNumberUtil.PhoneNumberFormat.E164,
-            )
-        val exampleNumTR =
-            phoneNumberUtil.format(
-                phoneNumberUtil.getExampleNumber("TR"),
-                PhoneNumberUtil.PhoneNumberFormat.E164,
-            )
-
-        val invalidExampleNumUS =
-            phoneNumberUtil.format(
-                phoneNumberUtil.getInvalidExampleNumber("US"),
-                PhoneNumberUtil.PhoneNumberFormat.E164,
-            )
-        val invalidExampleNumTR =
-            phoneNumberUtil.format(
-                phoneNumberUtil.getInvalidExampleNumber("TR"),
-                PhoneNumberUtil.PhoneNumberFormat.E164,
-            )
-
         smsModel =
             SmsModel(
-                listOf(exampleNumUS, exampleNumTR),
+                listOf(
+                    generatePhoneNumber(true, "US", PhoneNumberUtil.PhoneNumberFormat.E164),
+                    generatePhoneNumber(true, "TR", PhoneNumberUtil.PhoneNumberFormat.E164),
+                ),
                 "Test SMS",
                 null,
             )
 
         smsModelFormatted =
             SmsModel(
-                listOf("+90 532 456 78 90", "0 532 654 32 10", "553 444 33 22"),
+                listOf(
+                    generatePhoneNumber(true, "US", PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL),
+                    generatePhoneNumber(true, "TR", PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL),
+                    generatePhoneNumber(true, "TR", PhoneNumberUtil.PhoneNumberFormat.RFC3966),
+                ),
                 "Test SMS",
                 null,
             )
 
         invalidSmsModel =
             SmsModel(
-                listOf(invalidExampleNumUS, invalidExampleNumTR),
+                listOf(
+                    generatePhoneNumber(false, "US", PhoneNumberUtil.PhoneNumberFormat.E164),
+                    generatePhoneNumber(false, "TR", PhoneNumberUtil.PhoneNumberFormat.E164),
+                ),
                 "Test SMS",
-                null
+                null,
             )
     }
 
