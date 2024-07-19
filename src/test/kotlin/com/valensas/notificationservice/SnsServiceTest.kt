@@ -2,6 +2,7 @@ package com.valensas.notificationservice
 
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.valensas.notificationservice.model.SmsModel
+import com.valensas.notificationservice.model.generatePhoneNumber
 import com.valensas.notificationservice.service.SnsService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -41,54 +42,46 @@ class SnsServiceTest {
     fun init() {
         snsService = SnsService(snsClient)
 
-        val phoneNumberUtil = PhoneNumberUtil.getInstance()
-
-        val exampleNumUS =
-            phoneNumberUtil.format(
-                phoneNumberUtil.getExampleNumber("US"),
-                PhoneNumberUtil.PhoneNumberFormat.E164,
-            )
-        val exampleNumTR =
-            phoneNumberUtil.format(
-                phoneNumberUtil.getExampleNumber("TR"),
-                PhoneNumberUtil.PhoneNumberFormat.E164,
-            )
-
-        val invalidExampleNumUS = phoneNumberUtil.format(
-            phoneNumberUtil.getInvalidExampleNumber("US"),
-            PhoneNumberUtil.PhoneNumberFormat.E164,
-        )
-        val invalidExampleNumTR = phoneNumberUtil.format(
-            phoneNumberUtil.getInvalidExampleNumber("TR"),
-            PhoneNumberUtil.PhoneNumberFormat.E164,
-        )
-
         smsModel =
             SmsModel(
-                listOf(exampleNumUS, exampleNumTR),
+                listOf(
+                    generatePhoneNumber(true, "US", PhoneNumberUtil.PhoneNumberFormat.E164),
+                    generatePhoneNumber(true, "TR", PhoneNumberUtil.PhoneNumberFormat.E164),
+                ),
                 "Test SMS",
                 "Transactional",
             )
 
         smsModelFormatted =
             SmsModel(
-                listOf("+90 532 456 78 90", "0 533 654 32 10", "553 444 33 22"),
+                listOf(
+                    generatePhoneNumber(true, "US", PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL),
+                    generatePhoneNumber(true, "TR", PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL),
+                    generatePhoneNumber(true, "TR", PhoneNumberUtil.PhoneNumberFormat.RFC3966),
+                ),
                 "Test SMS",
                 "Transactional",
             )
 
         smsModelNull =
             SmsModel(
-                listOf(exampleNumUS, exampleNumTR),
+                listOf(
+                    generatePhoneNumber(false, "US", PhoneNumberUtil.PhoneNumberFormat.E164),
+                    generatePhoneNumber(false, "TR", PhoneNumberUtil.PhoneNumberFormat.E164),
+                ),
                 "Test SMS",
                 null,
             )
 
-        smsModelInvalidNumbers = SmsModel(
-            listOf(invalidExampleNumUS, invalidExampleNumTR),
-            "Test SMS",
-            "Transactional",
-        )
+        smsModelInvalidNumbers =
+            SmsModel(
+                listOf(
+                    generatePhoneNumber(false, "US", PhoneNumberUtil.PhoneNumberFormat.E164),
+                    generatePhoneNumber(false, "TR", PhoneNumberUtil.PhoneNumberFormat.E164),
+                ),
+                "Test SMS",
+                "Transactional",
+            )
     }
 
     @Test
