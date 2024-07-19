@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: notification
+
+  mail:
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT}
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
+        transport:
+          protocol: smtp
+        debug: ${SMTP_DEBUG}
+
+cloud:
+  aws:
+    region:
+      auto: true
+      static: ${AWS_REGION}
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+
+notification:
+  email:
+    service: ${EMAIL_SERVICE}
+    sender: ${SENDER_EMAIL}
