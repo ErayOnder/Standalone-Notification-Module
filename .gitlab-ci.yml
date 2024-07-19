@@ -1,0 +1,28 @@
+image: openjdk:21-slim
+
+stages:
+  - verify
+
+lint:
+  stage: verify
+  cache:
+    paths:
+      - .gradle
+  variables:
+    KUBERNETES_CPU_REQUEST: "1"
+    KUBERNETES_CPU_LIMIT: "1"
+    KUBERNETES_MEMORY_REQUEST: "2Gi"
+    KUBERNETES_MEMORY_LIMIT: "2Gi"
+  script: ./gradlew lintKotlin
+
+test:
+  stage: verify
+  cache:
+    paths:
+      - .gradle
+  variables:
+    KUBERNETES_CPU_REQUEST: "2"
+    KUBERNETES_CPU_LIMIT: "2"
+    KUBERNETES_MEMORY_REQUEST: "4Gi"
+    KUBERNETES_MEMORY_LIMIT: "4Gi"
+  script: ./gradlew test

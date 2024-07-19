@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: notification
+
+  mail:
+    host: localhost
+    port: 4247
+    username: test_user
+    password: password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
+        transport:
+          protocol: smtp
+        debug: false
+
+cloud:
+  aws:
+    region:
+      auto: true
+      static: eu-north-1
+    credentials:
+      access-key: TEST_KEY
+      secret-key: TEST_SECRET
+
+notification:
+  email:
+    service: "smtp"
+    sender: "test@example.com"
