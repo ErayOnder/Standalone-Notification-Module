@@ -28,6 +28,7 @@ class TwilioServiceTest {
     private lateinit var twilioService: TwilioService
     private lateinit var smsModel: SmsModel
     private lateinit var smsModelFormatted: SmsModel
+    private lateinit var invalidSmsModel: SmsModel
 
     @Captor
     private lateinit var phoneNumberCaptor: ArgumentCaptor<PhoneNumber>
@@ -52,6 +53,17 @@ class TwilioServiceTest {
                 PhoneNumberUtil.PhoneNumberFormat.E164,
             )
 
+        val invalidExampleNumUS =
+            phoneNumberUtil.format(
+                phoneNumberUtil.getInvalidExampleNumber("US"),
+                PhoneNumberUtil.PhoneNumberFormat.E164,
+            )
+        val invalidExampleNumTR =
+            phoneNumberUtil.format(
+                phoneNumberUtil.getInvalidExampleNumber("TR"),
+                PhoneNumberUtil.PhoneNumberFormat.E164,
+            )
+
         smsModel =
             SmsModel(
                 listOf(exampleNumUS, exampleNumTR),
@@ -64,6 +76,13 @@ class TwilioServiceTest {
                 listOf("+90 532 456 78 90", "0 532 654 32 10", "553 444 33 22"),
                 "Test SMS",
                 null,
+            )
+
+        invalidSmsModel =
+            SmsModel(
+                listOf(invalidExampleNumUS, invalidExampleNumTR),
+                "Test SMS",
+                null
             )
     }
 
@@ -108,6 +127,15 @@ class TwilioServiceTest {
         assertEquals(responseList.joinToString("\n"), response.body)
 
         messageStatic.close()
+    }
+
+    @Test
+    fun `sms twilio invalid phone number fail`() {
+        val response = twilioService.send(invalidSmsModel)
+        val responseList = invalidSmsModel.formattedReceivers.map { "$it: Failed to sent - Invalid phone number." }
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(responseList.joinToString("\n"), response.body)
     }
 
     @Test
