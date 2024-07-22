@@ -13,33 +13,10 @@ data class SmsModel(
     }
 
     val formattedReceivers: List<String>
-        get() = receivers.map { receiver -> formatPhoneNumber(receiver) }
-}
-
-fun formatPhoneNumber(phoneNumber: String): String {
-    val phoneNumberUtil = PhoneNumberUtil.getInstance()
-    val number = phoneNumberUtil.parse(phoneNumber, "TR")
-    return phoneNumberUtil.format(number, PhoneNumberUtil.PhoneNumberFormat.E164)
-}
-
-fun validatePhoneNumber(phoneNumber: String) {
-    val phoneNumberUtil = PhoneNumberUtil.getInstance()
-    val number = phoneNumberUtil.parse(phoneNumber, "TR")
-    if (!phoneNumberUtil.isValidNumber(number)) {
-        throw IllegalArgumentException("Invalid phone number.")
-    }
-}
-
-fun generatePhoneNumber(
-    isValid: Boolean,
-    regionCode: String,
-    format: PhoneNumberUtil.PhoneNumberFormat,
-): String {
-    val phoneNumberUtil = PhoneNumberUtil.getInstance()
-    val phoneNumber =
-        when (isValid) {
-            true -> phoneNumberUtil.getExampleNumber(regionCode)
-            false -> phoneNumberUtil.getInvalidExampleNumber(regionCode)
-        }
-    return phoneNumberUtil.format(phoneNumber, format)
+        get() =
+            receivers.map { receiver ->
+                val phoneNumberUtil = PhoneNumberUtil.getInstance()
+                val number = phoneNumberUtil.parse(receiver, "TR")
+                phoneNumberUtil.format(number, PhoneNumberUtil.PhoneNumberFormat.E164)
+            }
 }

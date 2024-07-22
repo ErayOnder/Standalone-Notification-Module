@@ -1,8 +1,5 @@
 package com.valensas.notificationservice
 
-import com.google.i18n.phonenumbers.PhoneNumberUtil
-import com.valensas.notificationservice.model.SmsModel
-import com.valensas.notificationservice.model.generatePhoneNumber
 import com.valensas.notificationservice.service.SnsService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,64 +21,19 @@ import kotlin.test.assertEquals
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @ActiveProfiles("test")
 @TestPropertySource(properties = ["notification.email.service=null", "notification.sms.service=sns"])
-class SnsServiceTest {
+class SnsServiceTest : SmsServiceTest() {
     @Mock
     private lateinit var snsClient: SnsClient
 
     private lateinit var snsService: SnsService
 
-    private lateinit var smsModel: SmsModel
-    private lateinit var smsModelFormatted: SmsModel
-    private lateinit var smsModelNull: SmsModel
-    private lateinit var smsModelInvalidNumbers: SmsModel
-
     @Captor
     private lateinit var publishRequestCaptor: ArgumentCaptor<PublishRequest>
 
     @BeforeEach
-    fun init() {
+    override fun init() {
+        super.init()
         snsService = SnsService(snsClient)
-
-        smsModel =
-            SmsModel(
-                listOf(
-                    generatePhoneNumber(true, "US", PhoneNumberUtil.PhoneNumberFormat.E164),
-                    generatePhoneNumber(true, "TR", PhoneNumberUtil.PhoneNumberFormat.E164),
-                ),
-                "Test SMS",
-                SmsModel.SmsType.TRANSACTIONAL,
-            )
-
-        smsModelFormatted =
-            SmsModel(
-                listOf(
-                    generatePhoneNumber(true, "US", PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL),
-                    generatePhoneNumber(true, "TR", PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL),
-                    generatePhoneNumber(true, "TR", PhoneNumberUtil.PhoneNumberFormat.RFC3966),
-                ),
-                "Test SMS",
-                SmsModel.SmsType.TRANSACTIONAL,
-            )
-
-        smsModelNull =
-            SmsModel(
-                listOf(
-                    generatePhoneNumber(false, "US", PhoneNumberUtil.PhoneNumberFormat.E164),
-                    generatePhoneNumber(false, "TR", PhoneNumberUtil.PhoneNumberFormat.E164),
-                ),
-                "Test SMS",
-                null,
-            )
-
-        smsModelInvalidNumbers =
-            SmsModel(
-                listOf(
-                    generatePhoneNumber(false, "US", PhoneNumberUtil.PhoneNumberFormat.E164),
-                    generatePhoneNumber(false, "TR", PhoneNumberUtil.PhoneNumberFormat.E164),
-                ),
-                "Test SMS",
-                SmsModel.SmsType.TRANSACTIONAL,
-            )
     }
 
     @Test

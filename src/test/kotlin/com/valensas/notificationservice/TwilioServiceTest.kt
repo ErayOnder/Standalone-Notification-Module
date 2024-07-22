@@ -1,12 +1,9 @@
 package com.valensas.notificationservice
 
-import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.twilio.exception.ApiException
 import com.twilio.rest.api.v2010.account.Message
 import com.twilio.rest.api.v2010.account.MessageCreator
 import com.twilio.type.PhoneNumber
-import com.valensas.notificationservice.model.SmsModel
-import com.valensas.notificationservice.model.generatePhoneNumber
 import com.valensas.notificationservice.service.TwilioService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,12 +21,9 @@ import kotlin.test.assertEquals
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @ActiveProfiles("test")
 @TestPropertySource(properties = ["notification.email.service=null", "notification.sms.service=twilio"])
-class TwilioServiceTest {
+class TwilioServiceTest : SmsServiceTest() {
     private var sender = "+12345678900"
     private lateinit var twilioService: TwilioService
-    private lateinit var smsModel: SmsModel
-    private lateinit var smsModelFormatted: SmsModel
-    private lateinit var invalidSmsModel: SmsModel
 
     @Captor
     private lateinit var phoneNumberCaptor: ArgumentCaptor<PhoneNumber>
@@ -38,39 +32,9 @@ class TwilioServiceTest {
     private lateinit var stringCaptor: ArgumentCaptor<String>
 
     @BeforeEach
-    fun init() {
+    override fun init() {
+        super.init()
         twilioService = TwilioService(sender)
-
-        smsModel =
-            SmsModel(
-                listOf(
-                    generatePhoneNumber(true, "US", PhoneNumberUtil.PhoneNumberFormat.E164),
-                    generatePhoneNumber(true, "TR", PhoneNumberUtil.PhoneNumberFormat.E164),
-                ),
-                "Test SMS",
-                null,
-            )
-
-        smsModelFormatted =
-            SmsModel(
-                listOf(
-                    generatePhoneNumber(true, "US", PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL),
-                    generatePhoneNumber(true, "TR", PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL),
-                    generatePhoneNumber(true, "TR", PhoneNumberUtil.PhoneNumberFormat.RFC3966),
-                ),
-                "Test SMS",
-                null,
-            )
-
-        invalidSmsModel =
-            SmsModel(
-                listOf(
-                    generatePhoneNumber(false, "US", PhoneNumberUtil.PhoneNumberFormat.E164),
-                    generatePhoneNumber(false, "TR", PhoneNumberUtil.PhoneNumberFormat.E164),
-                ),
-                "Test SMS",
-                null,
-            )
     }
 
     @Test
@@ -118,8 +82,8 @@ class TwilioServiceTest {
 
     @Test
     fun `sms twilio invalid phone number fail`() {
-        val response = twilioService.send(invalidSmsModel)
-        val responseList = invalidSmsModel.formattedReceivers.map { "$it: Failed to sent - Invalid phone number." }
+        val response = twilioService.send(smsModelInvalidNumbers)
+        val responseList = smsModelInvalidNumbers.formattedReceivers.map { "$it: Failed to sent - Invalid phone number." }
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals(responseList.joinToString("\n"), response.body)

@@ -1,7 +1,6 @@
 package com.valensas.notificationservice.service
 
 import com.valensas.notificationservice.model.SmsModel
-import com.valensas.notificationservice.model.validatePhoneNumber
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -13,7 +12,7 @@ import software.amazon.awssdk.services.sns.model.PublishRequest
 @ConditionalOnProperty("notification.sms.service", havingValue = "sns")
 class SnsService(
     private val snsClient: SnsClient,
-) : SmsService {
+) : SmsService() {
     override fun send(smsModel: SmsModel): ResponseEntity<String> {
         smsModel.type ?: return ResponseEntity.badRequest().body("SMS 'type' attribute is required.")
 
