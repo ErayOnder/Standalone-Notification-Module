@@ -7,7 +7,6 @@ import com.valensas.notificationservice.model.SmsModel
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 @Service("smsService")
@@ -17,7 +16,7 @@ class TwilioService(
     @Value("\${twilio.from-phone-number}")
     private val sender: String,
 ) : SmsService() {
-    override fun send(smsModel: SmsModel): ResponseEntity<String> {
+    override fun send(smsModel: SmsModel): List<String> {
         val responseList = mutableListOf<String>()
         smsModel.formattedReceivers.forEach { receiver ->
             try {
@@ -32,6 +31,6 @@ class TwilioService(
                 responseList += "$receiver: Failed to sent - ${e.message ?: "Unknown error."}"
             }
         }
-        return ResponseEntity.ok(responseList.joinToString("\n"))
+        return responseList
     }
 }

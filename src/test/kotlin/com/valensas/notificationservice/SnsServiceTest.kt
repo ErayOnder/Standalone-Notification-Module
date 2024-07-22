@@ -4,12 +4,12 @@ import com.valensas.notificationservice.service.SnsService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import software.amazon.awssdk.awscore.exception.AwsServiceException
@@ -42,8 +42,10 @@ class SnsServiceTest : SmsServiceTest() {
 
         val responseList = smsModel.formattedReceivers.map { "$it: Sent successfully." }
 
-        assertEquals(HttpStatus.OK, response.statusCode)
-        assertEquals(responseList.joinToString("\n"), response.body)
+        assertEquals(responseList.size, response.size)
+        responseList.zip(response).forEach { (expected, actual) ->
+            assertEquals(expected, actual)
+        }
     }
 
     @Test
@@ -55,16 +57,20 @@ class SnsServiceTest : SmsServiceTest() {
 
         val responseList = smsModel.formattedReceivers.map { "$it: Failed to sent - Error" }
 
-        assertEquals(HttpStatus.OK, response.statusCode)
-        assertEquals(responseList.joinToString("\n"), response.body)
+        assertEquals(responseList.size, response.size)
+        responseList.zip(response).forEach { (expected, actual) ->
+            assertEquals(expected, actual)
+        }
     }
 
     @Test
     fun `sms sns smsType null`() {
-        val response = snsService.send(smsModelNull)
+        val exception =
+            assertThrows<IllegalArgumentException> {
+                snsService.send(smsModelNull)
+            }
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
-        assertEquals("SMS 'type' attribute is required.", response.body)
+        assertEquals("SMS 'type' attribute is required.", exception.message)
     }
 
     @Test
@@ -72,8 +78,11 @@ class SnsServiceTest : SmsServiceTest() {
         val response = snsService.send(smsModelInvalidNumbers)
 
         val responseList = smsModelInvalidNumbers.formattedReceivers.map { "$it: Failed to sent - Invalid phone number." }
-        assertEquals(HttpStatus.OK, response.statusCode)
-        assertEquals(responseList.joinToString("\n"), response.body)
+
+        assertEquals(responseList.size, response.size)
+        responseList.zip(response).forEach { (expected, actual) ->
+            assertEquals(expected, actual)
+        }
     }
 
     @Test

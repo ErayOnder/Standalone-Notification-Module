@@ -2,10 +2,9 @@ package com.valensas.notificationservice.service
 
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.valensas.notificationservice.model.SmsModel
-import org.springframework.http.ResponseEntity
 
 abstract class SmsService {
-    abstract fun send(smsModel: SmsModel): ResponseEntity<String>
+    abstract fun send(smsModel: SmsModel): List<String>
 
     protected fun validatePhoneNumber(phoneNumber: String) {
         val phoneNumberUtil = PhoneNumberUtil.getInstance()

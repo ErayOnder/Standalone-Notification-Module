@@ -12,7 +12,6 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import kotlin.test.assertEquals
@@ -53,8 +52,11 @@ class TwilioServiceTest : SmsServiceTest() {
         val response = twilioService.send(smsModel)
         val responseList = smsModel.formattedReceivers.map { "$it: Sent successfully." }
 
-        assertEquals(HttpStatus.OK, response.statusCode)
-        assertEquals(responseList.joinToString("\n"), response.body)
+        assertEquals(responseList.size, response.size)
+        responseList.zip(response).forEach { (expected, actual) ->
+            assertEquals(expected, actual)
+        }
+
         messageStatic.close()
     }
 
@@ -74,8 +76,10 @@ class TwilioServiceTest : SmsServiceTest() {
         val response = twilioService.send(smsModel)
         val responseList = smsModel.formattedReceivers.map { "$it: Failed to sent - Error" }
 
-        assertEquals(HttpStatus.OK, response.statusCode)
-        assertEquals(responseList.joinToString("\n"), response.body)
+        assertEquals(responseList.size, response.size)
+        responseList.zip(response).forEach { (expected, actual) ->
+            assertEquals(expected, actual)
+        }
 
         messageStatic.close()
     }
@@ -85,8 +89,10 @@ class TwilioServiceTest : SmsServiceTest() {
         val response = twilioService.send(smsModelInvalidNumbers)
         val responseList = smsModelInvalidNumbers.formattedReceivers.map { "$it: Failed to sent - Invalid phone number." }
 
-        assertEquals(HttpStatus.OK, response.statusCode)
-        assertEquals(responseList.joinToString("\n"), response.body)
+        assertEquals(responseList.size, response.size)
+        responseList.zip(response).forEach { (expected, actual) ->
+            assertEquals(expected, actual)
+        }
     }
 
     @Test

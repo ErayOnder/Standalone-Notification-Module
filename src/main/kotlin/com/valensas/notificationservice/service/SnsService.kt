@@ -2,7 +2,6 @@ package com.valensas.notificationservice.service
 
 import com.valensas.notificationservice.model.SmsModel
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.sns.SnsClient
 import software.amazon.awssdk.services.sns.model.MessageAttributeValue
@@ -13,8 +12,8 @@ import software.amazon.awssdk.services.sns.model.PublishRequest
 class SnsService(
     private val snsClient: SnsClient,
 ) : SmsService() {
-    override fun send(smsModel: SmsModel): ResponseEntity<String> {
-        smsModel.type ?: return ResponseEntity.badRequest().body("SMS 'type' attribute is required.")
+    override fun send(smsModel: SmsModel): List<String> {
+        smsModel.type ?: throw IllegalArgumentException("SMS 'type' attribute is required.")
 
         val publisherRequestBuilder =
             PublishRequest.builder()
@@ -41,6 +40,6 @@ class SnsService(
             }
         }
 
-        return ResponseEntity.ok(responseList.joinToString("\n"))
+        return responseList
     }
 }
