@@ -49,7 +49,7 @@ class SnsServiceTest {
                     generatePhoneNumber(true, "TR", PhoneNumberUtil.PhoneNumberFormat.E164),
                 ),
                 "Test SMS",
-                "Transactional",
+                SmsModel.SmsType.TRANSACTIONAL,
             )
 
         smsModelFormatted =
@@ -60,7 +60,7 @@ class SnsServiceTest {
                     generatePhoneNumber(true, "TR", PhoneNumberUtil.PhoneNumberFormat.RFC3966),
                 ),
                 "Test SMS",
-                "Transactional",
+                SmsModel.SmsType.TRANSACTIONAL,
             )
 
         smsModelNull =
@@ -80,7 +80,7 @@ class SnsServiceTest {
                     generatePhoneNumber(false, "TR", PhoneNumberUtil.PhoneNumberFormat.E164),
                 ),
                 "Test SMS",
-                "Transactional",
+                SmsModel.SmsType.TRANSACTIONAL,
             )
     }
 
@@ -135,7 +135,7 @@ class SnsServiceTest {
         for (i in 0 until smsModel.formattedReceivers.size) {
             assertEquals(smsModel.formattedReceivers[i], publishRequests[i].phoneNumber())
             assertEquals(smsModel.body, publishRequests[i].message())
-            assertEquals(smsModel.type, publishRequests[i].messageAttributes()["AWS.SNS.SMS.SMSType"]?.stringValue())
+            assertEquals(smsModel.type.toString(), publishRequests[i].messageAttributes()["AWS.SNS.SMS.SMSType"]?.stringValue())
         }
     }
 
@@ -150,7 +150,7 @@ class SnsServiceTest {
         for (i in 0 until smsModelFormatted.formattedReceivers.size) {
             assertEquals(smsModelFormatted.formattedReceivers[i], publishRequests[i].phoneNumber())
             assertEquals(smsModelFormatted.body, publishRequests[i].message())
-            assertEquals(smsModelFormatted.type, publishRequests[i].messageAttributes()["AWS.SNS.SMS.SMSType"]?.stringValue())
+            assertEquals(smsModelFormatted.type.toString(), publishRequests[i].messageAttributes()["AWS.SNS.SMS.SMSType"]?.stringValue())
         }
     }
 }

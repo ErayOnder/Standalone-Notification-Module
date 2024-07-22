@@ -25,7 +25,7 @@ class SnsService(
                         put(
                             "AWS.SNS.SMS.SMSType",
                             MessageAttributeValue.builder()
-                                .stringValue(smsModel.type)
+                                .stringValue(smsModel.type.toString())
                                 .dataType("String").build(),
                         )
                     },

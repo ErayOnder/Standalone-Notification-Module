@@ -5,10 +5,11 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil
 data class SmsModel(
     val receivers: List<String>,
     val body: String,
-    val type: String?,
+    val type: SmsType?,
 ) {
-    init {
-        require(type?.lowercase() == "promotional" || type?.lowercase() == "transactional" || type == null)
+    enum class SmsType {
+        PROMOTIONAL,
+        TRANSACTIONAL,
     }
 
     val formattedReceivers: List<String>
