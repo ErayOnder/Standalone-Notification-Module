@@ -21,7 +21,7 @@
 ## Running the Module
 You can run the application directly on your local machine without needing to install a Servlet container. Execute the following command from the root level of the project:
 
-#### Mac OS X/Linux
+### Mac OS X/Linux
 ```bash
 ./gradlew bootRun
 ```
@@ -30,7 +30,7 @@ You can run the application directly on your local machine without needing to in
 The Email Notification Service allows sending emails to users via SMTP and AWS Simple Email Service (SES).
 
 ### Requirements
-Before running the project, ensure that the necessary environment variables are set. The `application.yaml` file contains placeholders within _**${}**_ for sensitive information such as access credentials, API tokens, and authentication details. Replace these placeholders with actual values in your local environment or deployment platform. This ensures secure and personalized configuration for services like SMTP and AWS SES.
+Before running the project, ensure that the necessary environment variables are set. The `application.yaml` file contains placeholders within **${}** for sensitive information such as access credentials, API tokens, and authentication details. Replace these placeholders with actual values in your local environment or deployment platform. This ensures secure and personalized configuration for services like SMTP and AWS SES.
 
 You can only use one of the channels below.
 
@@ -49,9 +49,6 @@ cloud:
 For SMTP:
 ```yaml
 spring:
-  application:
-    name: NotificationService
-
   mail:
     host: ${SMTP_HOST}
     port: ${SMTP_PORT}
@@ -106,7 +103,7 @@ POST http://localhost:8080/email
 ```
 
 ## SMS Service
-The SMS Notification Service allows sending emails to users via Twilio and AWS Simple Notification Service (SNS).
+The SMS Notification Service allows sending emails to users via Twilio or AWS Simple Notification Service (SNS).
 
 ### Requirements
 Before running the module, ensure that the necessary environment variables are set. The `application.yaml` file contains required attributes.
@@ -169,7 +166,7 @@ POST http://localhost:8080/sms
 ```
 
 #### Receivers Format
-The **_receivers_** attribute is an array of phone numbers. Both services require the phone numbers to be in the E.164 format. However, the module can automatically convert the phone numbers to the correct format as long as they are valid for given country code. The default country code is set to _"TR"_.
+The **_receivers_** attribute is an array of phone numbers. Both services require the phone numbers to be in the E.164 format. However, the module can automatically convert the phone numbers to the correct format as long as they are valid for given country code. The default country code is set to _**"TR"**_.
 
 #### Type Attribute
 The **_type_** attribute is only relevant to AWS SNS. You can choose between _"PROMOTIONAL"_ and _"TRANSACTIONAL"_ for the type of SMS you want to send. For Twilio, this attribute is not required.
