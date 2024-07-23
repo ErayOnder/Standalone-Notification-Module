@@ -105,7 +105,6 @@ POST http://localhost:8080/email
 }
 ```
 
-
 ## SMS Service
 The SMS Notification Service allows sending emails to users via Twilio and AWS Simple Notification Service (SNS).
 
@@ -133,6 +132,7 @@ twilio:
   auth-token: ${TWILIO_AUTH_TOKEN}
   from-phone-number: ${TWILIO_FROM_PHONE_NUMBER}
 ```
+
 You must fill the _**notification.sms.service**_ part in `application.yaml` file to specify the service you want to use.
 
 For AWS SNS:
@@ -164,11 +164,12 @@ POST http://localhost:8080/sms
       "+0987654321"
     ],
     "body": "SMS Content",
-    "type": "Transactional"
+    "type": "TRANSACTIONAL"
 }
 ```
 
 #### Receivers Format
 The **_receivers_** attribute is an array of phone numbers. Both services require the phone numbers to be in the E.164 format. However, the module can automatically convert the phone numbers to the correct format as long as they are valid for given country code. The default country code is set to _"TR"_.
+
 #### Type Attribute
-The **_type_** attribute is only relevant to AWS SNS. You can choose between _"Promotional"_ and _"Transactional"_ for the type of SMS you want to send.
+The **_type_** attribute is only relevant to AWS SNS. You can choose between _"PROMOTIONAL"_ and _"TRANSACTIONAL"_ for the type of SMS you want to send. For Twilio, this attribute is not required.
