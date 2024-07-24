@@ -9,13 +9,13 @@ import jakarta.mail.internet.MimeMultipart
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.HttpStatus
 import org.springframework.mail.MailAuthenticationException
 import org.springframework.mail.MailSendException
 import org.springframework.mail.javamail.JavaMailSender
@@ -33,7 +33,8 @@ class EmailServiceTest {
     private val senderAddress = "test@example.com"
 
     private lateinit var emailModel: EmailModel
-    private lateinit var emailModelWithoutHTML: EmailModel
+    private lateinit var emailModelWithNull: EmailModel
+    private lateinit var invalidAddressEmailModel: EmailModel
     private lateinit var emailService: EmailService
 
     @Captor
@@ -49,7 +50,9 @@ class EmailServiceTest {
 
         emailModel =
             EmailModel(
-                "test@example.com",
+                listOf("testTo1@example.com", "testTo2@example.com"),
+                listOf("testCc1@example.com", "testCc2@example.com"),
+                listOf("testBcc1@example.com", "testBcc2@example.com"),
                 EmailBody(
                     "Plain message",
                     "<h1>HTML message</h1>",
@@ -57,9 +60,23 @@ class EmailServiceTest {
                 "Test subject",
             )
 
-        emailModelWithoutHTML =
+        emailModelWithNull =
             EmailModel(
-                "test@example.com",
+                listOf("testTo1@example.com", "testTo2@example.com"),
+                null,
+                null,
+                EmailBody(
+                    "Plain message",
+                    null,
+                ),
+                "Test subject",
+            )
+
+        invalidAddressEmailModel =
+            EmailModel(
+                listOf("testTo@exaple.com"),
+                null,
+                listOf("invalid...email@example.com"),
                 EmailBody(
                     "Plain message",
                     null,
@@ -73,32 +90,45 @@ class EmailServiceTest {
         Mockito.`when`(mailSender.createMimeMessage()).thenReturn(Mockito.mock(MimeMessage::class.java))
         val response = emailService.send(emailModel)
 
-        assertEquals(HttpStatus.OK, response.statusCode)
-        assertEquals("Mail sent successfully to ${emailModel.receiver} with subject ${emailModel.subject}.", response.body)
+        assertEquals("Mail sent successfully to ${emailModel.receiversTo} with subject ${emailModel.subject}.", response)
     }
 
     @Test
     fun `sender authentication fail`() {
         Mockito.`when`(mailSender.createMimeMessage()).thenReturn(Mockito.mock(MimeMessage::class.java))
         Mockito.`when`(mailSender.send(Mockito.any(MimeMessage::class.java))).thenThrow(
-            MailAuthenticationException(""),
+            MailAuthenticationException("Authentication of server configurations failed."),
         )
-        val response = emailService.send(emailModel)
+        val exception =
+            assertThrows<MailAuthenticationException> {
+                emailService.send(emailModel)
+            }
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.statusCode)
-        assertEquals("Authentication of server configurations failed.", response.body)
+        assertEquals("Authentication of server configurations failed.", exception.message)
     }
 
     @Test
     fun `sender fails to send mail`() {
         Mockito.`when`(mailSender.createMimeMessage()).thenReturn(Mockito.mock(MimeMessage::class.java))
         Mockito.`when`(mailSender.send(Mockito.any(MimeMessage::class.java))).thenThrow(
-            MailSendException(""),
+            MailSendException("Mail failed to sent to ${emailModel.receiversTo} with subject ${emailModel.subject}."),
         )
-        val response = emailService.send(emailModel)
+        val exception =
+            assertThrows<MailSendException> {
+                emailService.send(emailModel)
+            }
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.statusCode)
-        assertEquals("Mail failed to sent to ${emailModel.receiver} with subject ${emailModel.subject}.", response.body)
+        assertEquals("Mail failed to sent to ${emailModel.receiversTo} with subject ${emailModel.subject}.", exception.message)
+    }
+
+    @Test
+    fun `service fails with invalid address`() {
+        val exception =
+            assertThrows<IllegalArgumentException> {
+                emailService.send(invalidAddressEmailModel)
+            }
+
+        assertEquals("Invalid email address: '${invalidAddressEmailModel.receiversBcc?.get(0)}'", exception.message)
     }
 
     @Test
@@ -109,9 +139,11 @@ class EmailServiceTest {
         val mimeMessage = mimeMessageCaptor.value
 
         assertEquals(senderAddress, mimeMessage.from[0].toString())
-        assertEquals(emailModel.subject, mimeMessage.subject)
-        assertEquals(emailModel.receiver, mimeMessage.getRecipients(Message.RecipientType.TO)[0].toString())
+        assertEquals(emailModel.receiversTo, mimeMessage.getRecipients(Message.RecipientType.TO).map { address -> address.toString() })
+        assertEquals(emailModel.receiversCc, mimeMessage.getRecipients(Message.RecipientType.CC).map { address -> address.toString() })
+        assertEquals(emailModel.receiversBcc, mimeMessage.getRecipients(Message.RecipientType.BCC).map { address -> address.toString() })
 
+        assertEquals(emailModel.subject, mimeMessage.subject)
         val plainTextContent = getContentFromMultipart(mimeMessage.content as MimeMultipart, "text/plain")
         val htmlTextContent = getContentFromMultipart(mimeMessage.content as MimeMultipart, "text/html")
         assertEquals(emailModel.body.plainMessage, plainTextContent)
@@ -119,20 +151,40 @@ class EmailServiceTest {
     }
 
     @Test
-    fun `send mime message verification with null html`() {
+    fun `send mime message verification with null fields`() {
         Mockito.`when`(mailSender.createMimeMessage()).thenReturn(JavaMailSenderImpl().createMimeMessage())
-        emailService.send(emailModelWithoutHTML)
+        emailService.send(emailModelWithNull)
         verify(mailSender).send(mimeMessageCaptor.capture())
         val mimeMessage = mimeMessageCaptor.value
 
         assertEquals(senderAddress, mimeMessage.from[0].toString())
-        assertEquals(emailModelWithoutHTML.subject, mimeMessage.subject)
-        assertEquals(emailModelWithoutHTML.receiver, mimeMessage.getRecipients(Message.RecipientType.TO)[0].toString())
+        assertEquals(
+            emailModelWithNull.receiversTo,
+            mimeMessage.getRecipients(Message.RecipientType.TO).map {
+                    address ->
+                address.toString()
+            },
+        )
+        assertEquals(
+            emailModelWithNull.receiversCc,
+            mimeMessage.getRecipients(Message.RecipientType.CC)?.map {
+                    address ->
+                address.toString()
+            },
+        )
+        assertEquals(
+            emailModelWithNull.receiversBcc,
+            mimeMessage.getRecipients(Message.RecipientType.BCC)?.map {
+                    address ->
+                address.toString()
+            },
+        )
 
+        assertEquals(emailModelWithNull.subject, mimeMessage.subject)
         val plainTextContent = getContentFromMultipart(mimeMessage.content as MimeMultipart, "text/plain")
         val htmlTextContent = getContentFromMultipart(mimeMessage.content as MimeMultipart, "text/html")
-        assertEquals(emailModelWithoutHTML.body.plainMessage, plainTextContent)
-        assertEquals(emailModelWithoutHTML.body.htmlMessage, htmlTextContent)
+        assertEquals(emailModelWithNull.body.plainMessage, plainTextContent)
+        assertEquals(emailModelWithNull.body.htmlMessage, htmlTextContent)
     }
 
     fun getContentFromMultipart(
