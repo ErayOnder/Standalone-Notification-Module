@@ -4,6 +4,7 @@ import com.twilio.exception.ApiException
 import com.twilio.rest.api.v2010.account.Message
 import com.twilio.rest.api.v2010.account.MessageCreator
 import com.twilio.type.PhoneNumber
+import com.valensas.notificationservice.service.SmsService
 import com.valensas.notificationservice.service.TwilioService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -50,11 +51,14 @@ class TwilioServiceTest : SmsServiceTest() {
         Mockito.`when`(messageCreator.create()).thenReturn(Mockito.mock(Message::class.java))
 
         val response = twilioService.send(smsModel)
-        val responseList = smsModel.formattedReceivers.map { "$it: Sent successfully." }
+        val responseList = smsModel.formattedReceivers.map { receiver ->
+            SmsService.SmsResponse(receiver, SmsService.SmsStatus.SUCCESS, "Sent successfully.") }
 
         assertEquals(responseList.size, response.size)
         responseList.zip(response).forEach { (expected, actual) ->
-            assertEquals(expected, actual)
+            assertEquals(expected.receiver, actual.receiver)
+            assertEquals(expected.status, actual.status)
+            assertEquals(expected.message, actual.message)
         }
 
         messageStatic.close()
@@ -74,11 +78,14 @@ class TwilioServiceTest : SmsServiceTest() {
         Mockito.`when`(messageCreator.create()).thenThrow(ApiException("Error"))
 
         val response = twilioService.send(smsModel)
-        val responseList = smsModel.formattedReceivers.map { "$it: Failed to sent - Error" }
+        val responseList = smsModel.formattedReceivers.map { receiver ->
+            SmsService.SmsResponse(receiver, SmsService.SmsStatus.FAILED, "Error") }
 
         assertEquals(responseList.size, response.size)
         responseList.zip(response).forEach { (expected, actual) ->
-            assertEquals(expected, actual)
+            assertEquals(expected.receiver, actual.receiver)
+            assertEquals(expected.status, actual.status)
+            assertEquals(expected.message, actual.message)
         }
 
         messageStatic.close()
@@ -87,11 +94,14 @@ class TwilioServiceTest : SmsServiceTest() {
     @Test
     fun `sms twilio invalid phone number fail`() {
         val response = twilioService.send(smsModelInvalidNumbers)
-        val responseList = smsModelInvalidNumbers.formattedReceivers.map { "$it: Failed to sent - Invalid phone number." }
+        val responseList = smsModelInvalidNumbers.formattedReceivers.map { receiver ->
+            SmsService.SmsResponse(receiver, SmsService.SmsStatus.FAILED, "Invalid phone number.") }
 
         assertEquals(responseList.size, response.size)
         responseList.zip(response).forEach { (expected, actual) ->
-            assertEquals(expected, actual)
+            assertEquals(expected.receiver, actual.receiver)
+            assertEquals(expected.status, actual.status)
+            assertEquals(expected.message, actual.message)
         }
     }
 

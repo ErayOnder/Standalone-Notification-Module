@@ -30,6 +30,8 @@ class TwilioService(
                 responseList += SmsResponse(receiver, SmsStatus.SUCCESS, "Sent successfully.")
             } catch (e: TwilioException) {
                 responseList += SmsResponse(receiver, SmsStatus.FAILED, e.message ?: "Failed to send.")
+            } catch (e: IllegalArgumentException) {
+                responseList += SmsResponse(receiver, SmsStatus.FAILED, e.message ?: "Failed to send.")
             }
         }
         return responseList

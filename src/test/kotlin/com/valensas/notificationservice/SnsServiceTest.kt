@@ -1,5 +1,6 @@
 package com.valensas.notificationservice
 
+import com.valensas.notificationservice.service.SmsService
 import com.valensas.notificationservice.service.SnsService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -39,12 +40,14 @@ class SnsServiceTest : SmsServiceTest() {
     @Test
     fun `sms sns publish success`() {
         val response = snsService.send(smsModel)
-
-        val responseList = smsModel.formattedReceivers.map { "$it: Sent successfully." }
+        val responseList = smsModel.formattedReceivers.map { receiver ->
+            SmsService.SmsResponse(receiver, SmsService.SmsStatus.SUCCESS, "Sent successfully.") }
 
         assertEquals(responseList.size, response.size)
         responseList.zip(response).forEach { (expected, actual) ->
-            assertEquals(expected, actual)
+            assertEquals(expected.receiver, actual.receiver)
+            assertEquals(expected.status, actual.status)
+            assertEquals(expected.message, actual.message)
         }
     }
 
@@ -55,11 +58,14 @@ class SnsServiceTest : SmsServiceTest() {
         ).thenThrow(AwsServiceException.builder().message("Error").build())
         val response = snsService.send(smsModel)
 
-        val responseList = smsModel.formattedReceivers.map { "$it: Failed to sent - Error" }
+        val responseList = smsModel.formattedReceivers.map { receiver ->
+            SmsService.SmsResponse(receiver, SmsService.SmsStatus.FAILED, "Error") }
 
         assertEquals(responseList.size, response.size)
         responseList.zip(response).forEach { (expected, actual) ->
-            assertEquals(expected, actual)
+            assertEquals(expected.receiver, actual.receiver)
+            assertEquals(expected.status, actual.status)
+            assertEquals(expected.message, actual.message)
         }
     }
 
@@ -77,11 +83,14 @@ class SnsServiceTest : SmsServiceTest() {
     fun `sms sns invalid phone number fail`() {
         val response = snsService.send(smsModelInvalidNumbers)
 
-        val responseList = smsModelInvalidNumbers.formattedReceivers.map { "$it: Failed to sent - Invalid phone number." }
+        val responseList = smsModelInvalidNumbers.formattedReceivers.map { receiver ->
+            SmsService.SmsResponse(receiver, SmsService.SmsStatus.FAILED, "Invalid phone number.") }
 
         assertEquals(responseList.size, response.size)
         responseList.zip(response).forEach { (expected, actual) ->
-            assertEquals(expected, actual)
+            assertEquals(expected.receiver, actual.receiver)
+            assertEquals(expected.status, actual.status)
+            assertEquals(expected.message, actual.message)
         }
     }
 
