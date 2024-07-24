@@ -1,7 +1,9 @@
 package com.valensas.notificationservice.model
 
 data class EmailModel(
-    val receiver: String,
+    val receiversTo: List<String>,
+    val receiversCc: List<String>?,
+    val receiversBcc: List<String>?,
     val body: EmailBody,
     val subject: String,
 )
