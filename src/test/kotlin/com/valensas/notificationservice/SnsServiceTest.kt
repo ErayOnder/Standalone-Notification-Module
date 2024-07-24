@@ -40,8 +40,10 @@ class SnsServiceTest : SmsServiceTest() {
     @Test
     fun `sms sns publish success`() {
         val response = snsService.send(smsModel)
-        val responseList = smsModel.formattedReceivers.map { receiver ->
-            SmsService.SmsResponse(receiver, SmsService.SmsStatus.SUCCESS, "Sent successfully.") }
+        val responseList =
+            smsModel.formattedReceivers.map { receiver ->
+                SmsService.SmsResponse(receiver, SmsService.SmsStatus.SUCCESS, "Sent successfully.")
+            }
 
         assertEquals(responseList.size, response.size)
         responseList.zip(response).forEach { (expected, actual) ->
@@ -58,8 +60,10 @@ class SnsServiceTest : SmsServiceTest() {
         ).thenThrow(AwsServiceException.builder().message("Error").build())
         val response = snsService.send(smsModel)
 
-        val responseList = smsModel.formattedReceivers.map { receiver ->
-            SmsService.SmsResponse(receiver, SmsService.SmsStatus.FAILED, "Error") }
+        val responseList =
+            smsModel.formattedReceivers.map { receiver ->
+                SmsService.SmsResponse(receiver, SmsService.SmsStatus.FAILED, "Error")
+            }
 
         assertEquals(responseList.size, response.size)
         responseList.zip(response).forEach { (expected, actual) ->
@@ -83,8 +87,10 @@ class SnsServiceTest : SmsServiceTest() {
     fun `sms sns invalid phone number fail`() {
         val response = snsService.send(smsModelInvalidNumbers)
 
-        val responseList = smsModelInvalidNumbers.formattedReceivers.map { receiver ->
-            SmsService.SmsResponse(receiver, SmsService.SmsStatus.FAILED, "Invalid phone number.") }
+        val responseList =
+            smsModelInvalidNumbers.formattedReceivers.map { receiver ->
+                SmsService.SmsResponse(receiver, SmsService.SmsStatus.FAILED, "Invalid phone number.")
+            }
 
         assertEquals(responseList.size, response.size)
         responseList.zip(response).forEach { (expected, actual) ->
