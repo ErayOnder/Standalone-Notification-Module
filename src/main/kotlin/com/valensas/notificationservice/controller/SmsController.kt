@@ -19,13 +19,15 @@ class SmsController(
     @PostMapping("/sms")
     fun sendSms(
         @RequestBody smsModel: SmsModel,
-    ): ResponseEntity<String> {
+    ): ResponseEntity<List<SmsService.SmsResponse>> {
         try {
             val response = smsService.send(smsModel)
-            return ResponseEntity.ok(response.joinToString("\n"))
+            return ResponseEntity.ok(response)
         } catch (e: Exception) {
             val message = e.message ?: "An error occurred while sending sms"
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message)
+            return ResponseEntity.status(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            ).body(listOf(SmsService.SmsResponse("", SmsService.SmsStatus.FAILED, message)))
         }
     }
 }

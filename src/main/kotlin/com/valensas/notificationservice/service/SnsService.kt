@@ -1,6 +1,5 @@
 package com.valensas.notificationservice.service
 
-import com.twilio.twiml.voice.Sms
 import com.valensas.notificationservice.model.SmsModel
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service

@@ -1,7 +1,7 @@
 package com.valensas.notificationservice.service
 
+import com.twilio.exception.TwilioException
 import com.twilio.rest.api.v2010.account.Message
-import com.twilio.twiml.voice.Sms
 import com.twilio.type.PhoneNumber
 import com.valensas.notificationservice.config.TwilioProperties
 import com.valensas.notificationservice.model.SmsModel
@@ -28,7 +28,7 @@ class TwilioService(
                     smsModel.body,
                 ).create()
                 responseList += SmsResponse(receiver, SmsStatus.SUCCESS, "Sent successfully.")
-            } catch (e: Exception) {
+            } catch (e: TwilioException) {
                 responseList += SmsResponse(receiver, SmsStatus.FAILED, e.message ?: "Failed to send.")
             }
         }

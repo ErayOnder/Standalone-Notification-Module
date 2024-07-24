@@ -1,7 +1,6 @@
 package com.valensas.notificationservice.service
 
 import com.google.i18n.phonenumbers.PhoneNumberUtil
-import com.twilio.twiml.voice.Sms
 import com.valensas.notificationservice.model.SmsModel
 
 abstract class SmsService {
