@@ -1,5 +1,6 @@
 package com.valensas.notificationservice.service
 
+import com.twilio.twiml.voice.Sms
 import com.valensas.notificationservice.model.SmsModel
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
@@ -12,7 +13,7 @@ import software.amazon.awssdk.services.sns.model.PublishRequest
 class SnsService(
     private val snsClient: SnsClient,
 ) : SmsService() {
-    override fun send(smsModel: SmsModel): List<String> {
+    override fun send(smsModel: SmsModel): List<SmsResponse> {
         smsModel.type ?: throw IllegalArgumentException("SMS 'type' attribute is required.")
 
         val publisherRequestBuilder =
@@ -29,14 +30,14 @@ class SnsService(
                     },
                 )
 
-        val responseList = mutableListOf<String>()
+        val responseList = mutableListOf<SmsResponse>()
         smsModel.formattedReceivers.forEach { receiver ->
             try {
                 validatePhoneNumber(receiver)
                 snsClient.publish(publisherRequestBuilder.phoneNumber(receiver).build())
-                responseList += "$receiver: Sent successfully."
+                responseList += SmsResponse(receiver, SmsStatus.SUCCESS, "Sent successfully.")
             } catch (e: Exception) {
-                responseList += "$receiver: Failed to sent - ${e.message ?: "Unknown error."}"
+                responseList += SmsResponse(receiver, SmsStatus.FAILED, e.message ?: "Failed to send.")
             }
         }
 

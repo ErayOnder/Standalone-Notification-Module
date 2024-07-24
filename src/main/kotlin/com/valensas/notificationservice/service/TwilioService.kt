@@ -1,6 +1,7 @@
 package com.valensas.notificationservice.service
 
 import com.twilio.rest.api.v2010.account.Message
+import com.twilio.twiml.voice.Sms
 import com.twilio.type.PhoneNumber
 import com.valensas.notificationservice.config.TwilioProperties
 import com.valensas.notificationservice.model.SmsModel
@@ -16,8 +17,8 @@ class TwilioService(
     @Value("\${twilio.from-phone-number}")
     private val sender: String,
 ) : SmsService() {
-    override fun send(smsModel: SmsModel): List<String> {
-        val responseList = mutableListOf<String>()
+    override fun send(smsModel: SmsModel): List<SmsResponse> {
+        val responseList = mutableListOf<SmsResponse>()
         smsModel.formattedReceivers.forEach { receiver ->
             try {
                 validatePhoneNumber(receiver)
@@ -26,9 +27,9 @@ class TwilioService(
                     PhoneNumber(sender),
                     smsModel.body,
                 ).create()
-                responseList += "$receiver: Sent successfully."
+                responseList += SmsResponse(receiver, SmsStatus.SUCCESS, "Sent successfully.")
             } catch (e: Exception) {
-                responseList += "$receiver: Failed to sent - ${e.message ?: "Unknown error."}"
+                responseList += SmsResponse(receiver, SmsStatus.FAILED, e.message ?: "Failed to send.")
             }
         }
         return responseList
