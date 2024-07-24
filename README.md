@@ -82,13 +82,15 @@ Follow the steps below to send email notifications:
 
 ### Endpoint
 ```
-POST http://localhost:8080/v1/email
+POST http://localhost:8080/email
 ```
 
 ### Request Body
 ```json
 {
-    "receiver": "example@email.com",
+    "receiversTo": ["example1@email.com", "example2@email.com"],
+    "receiversCc": ["example3@email.com", "example4@email.com"],
+    "receiversBcc": ["example5@email.com", "example6@email.com"],
     "body": {
         "plainMessage": "Email Plain Content",
         "htmlMessage": "Email HTML Content"
