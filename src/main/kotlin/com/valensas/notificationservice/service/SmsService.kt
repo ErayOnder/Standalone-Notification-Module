@@ -18,10 +18,10 @@ abstract class SmsService {
         val receiver: String,
         val status: SmsStatus,
         val message: String,
-    )
-
-    enum class SmsStatus {
-        SUCCESS,
-        FAILED,
+    ) {
+        enum class SmsStatus {
+            SUCCESS,
+            FAILED,
+        }
     }
 }

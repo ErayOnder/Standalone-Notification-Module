@@ -28,9 +28,9 @@ class TwilioService(
             try {
                 validatePhoneNumber(receiver)
                 message.create()
-                responseList += SmsResponse(receiver, SmsStatus.SUCCESS, "Sent successfully.")
+                responseList += SmsResponse(receiver, SmsResponse.SmsStatus.SUCCESS, "Sent successfully.")
             } catch (e: Exception) {
-                responseList += SmsResponse(receiver, SmsStatus.FAILED, e.message ?: "Failed to send.")
+                responseList += SmsResponse(receiver, SmsResponse.SmsStatus.FAILED, e.message ?: "Failed to send.")
             }
         }
         return responseList

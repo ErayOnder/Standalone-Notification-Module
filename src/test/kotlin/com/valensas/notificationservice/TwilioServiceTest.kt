@@ -5,6 +5,7 @@ import com.twilio.rest.api.v2010.account.Message
 import com.twilio.rest.api.v2010.account.MessageCreator
 import com.twilio.type.PhoneNumber
 import com.valensas.notificationservice.service.SmsService
+import com.valensas.notificationservice.service.SmsService.SmsResponse
 import com.valensas.notificationservice.service.TwilioService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -53,7 +54,7 @@ class TwilioServiceTest : SmsServiceTest() {
         val response = twilioService.send(smsModel)
         val responseList =
             smsModel.formattedReceivers.map { receiver ->
-                SmsService.SmsResponse(receiver, SmsService.SmsStatus.SUCCESS, "Sent successfully.")
+                SmsService.SmsResponse(receiver, SmsResponse.SmsStatus.SUCCESS, "Sent successfully.")
             }
 
         assertEquals(responseList.size, response.size)
@@ -82,7 +83,7 @@ class TwilioServiceTest : SmsServiceTest() {
         val response = twilioService.send(smsModel)
         val responseList =
             smsModel.formattedReceivers.map { receiver ->
-                SmsService.SmsResponse(receiver, SmsService.SmsStatus.FAILED, "Error")
+                SmsService.SmsResponse(receiver, SmsResponse.SmsStatus.FAILED, "Error")
             }
 
         assertEquals(responseList.size, response.size)
@@ -100,7 +101,7 @@ class TwilioServiceTest : SmsServiceTest() {
         val response = twilioService.send(smsModelInvalidNumbers)
         val responseList =
             smsModelInvalidNumbers.formattedReceivers.map { receiver ->
-                SmsService.SmsResponse(receiver, SmsService.SmsStatus.FAILED, "Invalid phone number.")
+                SmsService.SmsResponse(receiver, SmsResponse.SmsStatus.FAILED, "Invalid phone number.")
             }
 
         assertEquals(responseList.size, response.size)

@@ -1,6 +1,7 @@
 package com.valensas.notificationservice
 
 import com.valensas.notificationservice.service.SmsService
+import com.valensas.notificationservice.service.SmsService.SmsResponse
 import com.valensas.notificationservice.service.SnsService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -42,7 +43,7 @@ class SnsServiceTest : SmsServiceTest() {
         val response = snsService.send(smsModel)
         val responseList =
             smsModel.formattedReceivers.map { receiver ->
-                SmsService.SmsResponse(receiver, SmsService.SmsStatus.SUCCESS, "Sent successfully.")
+                SmsService.SmsResponse(receiver, SmsResponse.SmsStatus.SUCCESS, "Sent successfully.")
             }
 
         assertEquals(responseList.size, response.size)
@@ -62,7 +63,7 @@ class SnsServiceTest : SmsServiceTest() {
 
         val responseList =
             smsModel.formattedReceivers.map { receiver ->
-                SmsService.SmsResponse(receiver, SmsService.SmsStatus.FAILED, "Error")
+                SmsService.SmsResponse(receiver, SmsResponse.SmsStatus.FAILED, "Error")
             }
 
         assertEquals(responseList.size, response.size)
@@ -89,7 +90,7 @@ class SnsServiceTest : SmsServiceTest() {
 
         val responseList =
             smsModelInvalidNumbers.formattedReceivers.map { receiver ->
-                SmsService.SmsResponse(receiver, SmsService.SmsStatus.FAILED, "Invalid phone number.")
+                SmsService.SmsResponse(receiver, SmsResponse.SmsStatus.FAILED, "Invalid phone number.")
             }
 
         assertEquals(responseList.size, response.size)

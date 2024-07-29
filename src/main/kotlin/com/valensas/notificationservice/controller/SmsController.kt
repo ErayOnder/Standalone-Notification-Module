@@ -2,6 +2,7 @@ package com.valensas.notificationservice.controller
 
 import com.valensas.notificationservice.model.SmsModel
 import com.valensas.notificationservice.service.SmsService
+import com.valensas.notificationservice.service.SmsService.SmsResponse
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.http.HttpStatus
@@ -27,7 +28,7 @@ class SmsController(
             val message = e.message ?: "An error occurred while sending sms"
             return ResponseEntity.status(
                 HttpStatus.INTERNAL_SERVER_ERROR,
-            ).body(listOf(SmsService.SmsResponse("", SmsService.SmsStatus.FAILED, message)))
+            ).body(listOf(SmsService.SmsResponse("", SmsResponse.SmsStatus.FAILED, message)))
         }
     }
 }
